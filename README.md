@@ -1,2 +1,2 @@
 # petro
-mask for thinsection photo
+group of modules for photographing petrographic thin sections
