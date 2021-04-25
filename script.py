@@ -1,20 +1,29 @@
 import cv2
 import numpy as np
 import sys
+import glob
 
 
 RESIZE_FACTOR=10
+new_path = "/tmp/petro/~/OCVB/76/x5/1/"
+
 
 ## FUNCTIONS
+def pr(new_path):
+	print(new_path)
 
-def load():
 
-	img = cv2.imread('1.jpg',1)
-	img1 = cv2.imread('2.jpg',1)
+def load(new_path):
+	
+	images = glob.glob(str(new_path+"*.jpg"))
+	im1 = str(images[0])
+	im2 = str(images[1])
+	img = cv2.imread(im1,1)
+	img1 = cv2.imread(im2,1)
 	return img, img1
  
 
-def resize_img(resize_factor):
+def resize_img(resize_factor,img):
 
 	h, w = img.shape[:2]
 	h = int(h/resize_factor)
@@ -41,7 +50,7 @@ def initial_coordinates_radius(x_r, y_r, r_r, resize_factor):
 	return x, y, r
 	
 
-def mask_to_img():
+def mask_to_img(img,img1,x,y,r):
 	
 	h, w = img.shape[:2]
 	circle_img = np.zeros((h,w), np.uint8)
@@ -65,23 +74,13 @@ def combine_img():
 
 ## PROGRAMMA
 
-#load photo thinsiction
-(img,img1) = load()
-
-#resize photo thinsiction
-(w, rimg) = resize_img(RESIZE_FACTOR)
-
-#find in resise photo thinsection coordinates centre and radius circle
-x_r, y_r, r_r = find_circle(w, rimg)
-
-#convert coordinates centre and radius circle to initial size photo
-x, y, r = initial_coordinates_radius(x_r, y_r, r_r, RESIZE_FACTOR)
-
-#put mask to thinsection photo
-mask_to_img()
-
-#combine two photo (-,+) thinsection
-combine_img()
+def run_combine():
+	(img,img1) = load(new_path) #load photo thinsiction
+	(w, rimg) = resize_img(RESIZE_FACTOR,img) #resize photo thinsiction
+	x_r, y_r, r_r = find_circle(w, rimg) #find in resise photo thinsection coordinates centre and radius circle
+	x, y, r = initial_coordinates_radius(x_r, y_r, r_r, RESIZE_FACTOR) #convert coordinates centre and radius circle to initial size photo
+	mask_to_img(img,img1,x, y, r) #put mask to thinsection photo
+	combine_img() #combine two photo (-,+) thinsection
 
 
 

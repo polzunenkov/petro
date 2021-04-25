@@ -2,6 +2,13 @@ import subprocess
 import os	
 import click
 
+import cv2
+import numpy as np
+import sys
+import glob
+from script import *
+
+
 def _create_new_path(old_path, thinsection_name, lense, uch_name):
 	''' Возвращает новое имя для фотографий шлифов с учетом имени thinsection_name
 	'''
@@ -17,7 +24,7 @@ def copy(path, new_path):
 	subprocess.run(["mkdir", "-p", new_path])
 	subprocess.run(["adb", "pull", "/sdcard/DCIM/Camera/.", new_path])
 	subprocess.run(["rm","-rf", os.path.join(new_path, "cache") ])
-
+	
 
 def del_photo_folder(pattern):
 	''' удаляет фотографии с телефона из дирректории Camera 
@@ -52,10 +59,8 @@ def main(path, pattern, thinsection_name, lense_name, uch_name, do_not_remove_fr
 	new_path = _create_new_path(old_path, thinsection_name, lense_name, uch_name)
 	click.echo(old_path)
 	click.echo(new_path)
-	print("path = " + path)
-	print("new_path = " + new_path)
-	print("old_path = " + old_path)
-	copy(old_path,new_path)	
+	copy(old_path,new_path)
+	#run_combine()
 	
 	if not do_not_remove_from_phone:
 		del_photo_folder(pattern)
