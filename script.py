@@ -9,8 +9,8 @@ RESIZE_FACTOR=10
 
 def load():
 
-	img = cv2.imread('IMG_20210414_162502.jpg',1)
-	img1 = cv2.imread('IMG_20210414_162457.jpg',1)
+	img = cv2.imread('1.jpg',1)
+	img1 = cv2.imread('2.jpg',1)
 	return img, img1
  
 
