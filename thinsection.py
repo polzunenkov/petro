@@ -6,7 +6,7 @@ import cv2
 import numpy as np
 import sys
 import glob
-from script import run_combine
+from script import montage
 
 
 def _create_new_path(old_path, thinsection_name, lense, uch_name):
@@ -49,11 +49,11 @@ def del_photo_folder(pattern):
 @click.option('--uch_name', help='name of the uch used', 
               default="1")
 @click.option('--montage', help='combine photo after change black by white from mask circle', 
-              default="0")
+              is_flag=True, default=False)
 @click.option('--do_not_remove_from_phone', '-D', 
               help='remove phtos from phone folder ', 
               is_flag=True, default=False)
-def main(path, pattern, thinsection_name, lense_name, uch_name, do_not_remove_from_phone):
+def main(path, pattern, thinsection_name, lense_name, uch_name, montage, do_not_remove_from_phone):
 	'''
 	Копирует файлы с камеры телефона на компьютер
 	'''
@@ -62,9 +62,8 @@ def main(path, pattern, thinsection_name, lense_name, uch_name, do_not_remove_fr
 	click.echo(old_path)
 	click.echo(new_path)
 	copy(old_path,new_path)
-	
-	#if montage == 1:
-	#	run_combine(new_path)
+	if montage:
+		montage(new_path)
 	
 	if not do_not_remove_from_phone:
 		del_photo_folder(pattern)

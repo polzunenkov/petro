@@ -4,6 +4,7 @@ from PIL import ImageTk, Image
 import time
 import subprocess
 
+
 def camera_on():
 	
 	i = 0
@@ -25,7 +26,7 @@ def photo_make():
 	subprocess.Popen('adb shell input keyevent 27',shell=True)
 
 def param(collection, thinsection, obj, uch, chk_state):
-	save_thinsection_photo = f"python3.7 thinsection.py --path=~/{collection.get()} --thinsection_name={thinsection.get()} --lense_name={obj.get()} --uch_name={uch.get()} --montage={chk_state.get()}"
+	save_thinsection_photo = f"python3.7 thinsection.py --path={collection.get()} --thinsection_name={thinsection.get()} --lense_name={obj.get()} --uch_name={uch.get()} --montage={chk_state.get()}"
 	print(save_thinsection_photo)
 	subprocess.Popen(str(save_thinsection_photo),shell=True)
 	
