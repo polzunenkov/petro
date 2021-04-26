@@ -24,65 +24,70 @@ def camera_on():
 def photo_make():
 	subprocess.Popen('adb shell input keyevent 27',shell=True)
 
-def param(thinsection, collection, obj, uch):
-	save_thinsection_photo = f"python3.7 thinsection.py --path=~/{collection.get()} --thinsection_name={thinsection.get()} --lense_name={obj.get()} --uch_name={uch.get()}"
+def param(collection, thinsection, obj, uch, chk_state):
+	save_thinsection_photo = f"python3.7 thinsection.py --path=~/{collection.get()} --thinsection_name={thinsection.get()} --lense_name={obj.get()} --uch_name={uch.get()} --montage={chk_state.get()}"
 	print(save_thinsection_photo)
 	subprocess.Popen(str(save_thinsection_photo),shell=True)
 	
 class Application:
     def __init__(self, root):
         self.root = root
-        path="microscope.jpg"
-        img = Image.open(path)
+        img = Image.open("microscope.jpg")
         w = 500
         ratio = (w / float(img.size[0]))
         h = int((float(img.size[1]) * float(ratio)))
         imag = img.resize((w,h), Image.ANTIALIAS)
         image = ImageTk.PhotoImage(imag)
-        panel = Label(root, image=image)
+        panel = Label(self.root, image=image)
         panel.pack(side="top", fill="both", expand="no")
-        root.title("Фотографии шлифов")
+        self.root.title("Фотографии шлифов")
 
-        Label(root, text="Коллекция").place(x=200,y=10)
-        colection = Entry(root,width=20)
-        colection.place(x=320,y=10)
-        colection.focus()
+        Label(self.root, text="Коллекция").place(x=200,y=10)
+        collection = Entry(self.root,width=20)
+        collection.place(x=320,y=10)
+        collection.focus()
 
-        Label(root, text="Автор").place(x=250,y=30)
-        author = Entry(root,width=20)
+        Label(self.root, text="Автор").place(x=250,y=30)
+        author = Entry(self.root,width=20)
         author.place(x=320,y=30)
 
-        Label(root, text="Обьектив").place(x=10,y=200)
-        obj = Combobox(root,width=5)
+        Label(self.root, text="Обьектив").place(x=10,y=200)
+        obj = Combobox(self.root,width=5)
         obj['values'] = ("x5", "x10", "X20", "X40", "X50", "X100")
         obj.current(0) # установите вариант по умолчанию
         obj.place(x=120,y=200)
 
-        Label(root, text="№ шлифа").place(x=10,y=250)
-        thinsection = Entry(root,width=15)
+        Label(self.root, text="№ шлифа").place(x=10,y=250)
+        thinsection = Entry(self.root,width=15)
         thinsection.place(x=150,y=250)
 
-        Label(root, text="№ учатска").place(x=10,y=300)
+        Label(self.root, text="№ учатска").place(x=10,y=300)
         #uch = Entry(root,width=5)
         #uch.place(x=150,y=300)
 
-        uch = Spinbox(root, from_=1, to=5, width=4)  
+        uch = Spinbox(self.root, from_=1, to=5, width=4)  
         uch.place(x=150,y=300)  
 
-        btn = Button(root, text=">", command=param, height = 6, width = 8)
-        btn.place(x=420,y=180)
 
-        GO = Button(root, text="Выход", command=root.quit, height = 6, width = 8)
+        GO = Button(self.root, text="Выход", command=self.root.quit, height = 6, width = 8)
         GO.place(x=420,y=300) #
 
 
 
-        camera = Button(root, text="Камера", command=camera_on, height = 8, width = 10)
-        camera.place(x=10,y=340) #
-
-
-
-        #Label(root, text="Николи").place(x=30,y=380)
+        camera = Button(self.root, text="Камера", command=camera_on, height = 8, width = 10)
+        camera.place(x=10,y=340)
+        chk_state = IntVar()
+        chk_state.set(0) # False
+        chk_state.set(1) # True
+        chk = Checkbutton(self.root, text='Монтаж', var=chk_state)
+        chk.place(x=100, y=340)
+        
+        
+        btn = Button(self.root, text=">", height = 6, width = 8, command=lambda: param(collection, thinsection, obj, uch, chk_state))
+        btn.place(x=420,y=180)
+		
+		
+		#Label(root, text="Николи").place(x=30,y=380)
         #nicoli_minus = Button(root, text="-", command=photo_make, height = 3, width = 4)
         #nicoli_minus.place(x=10,y=410) #
 

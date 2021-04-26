@@ -5,7 +5,7 @@ import glob
 
 
 RESIZE_FACTOR=10
-new_path = "/tmp/petro/~/OCVB/76/x5/1/"
+#new_path = "/tmp/petro/~/OCVB/76/x5/1/"
 
 
 ## FUNCTIONS
@@ -74,7 +74,7 @@ def combine_img():
 
 ## PROGRAMMA
 
-def run_combine():
+def run_combine(new_path):
 	(img,img1) = load(new_path) #load photo thinsiction
 	(w, rimg) = resize_img(RESIZE_FACTOR,img) #resize photo thinsiction
 	x_r, y_r, r_r = find_circle(w, rimg) #find in resise photo thinsection coordinates centre and radius circle
