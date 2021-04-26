@@ -5,6 +5,7 @@ from PIL import ImageTk, Image
 import time
 import subprocess
 
+from script import run_combine
 
 def camera_on():
 	
@@ -33,7 +34,7 @@ def photo_make():
 	#subprocess.run(["mv", f"/sdcard/DCIM/Camera/{pattern}"])
 	
 	#for img in *.jpg; do mv -- "$img" "/tmp/petro/nicole-.jpg"; done
-	for img in /sdcard/DCIM/Camera/*.jpg; do mv -- "$img" "/tmp/petro/nicole-.jpg"; done
+	#for img in /sdcard/DCIM/Camera/*.jpg; do mv -- "$img" "/tmp/petro/nicole-.jpg"; done
 
 	#os.system("adb shell input keyevent 4")
 	#os.system("input keyevent 27")
@@ -70,7 +71,7 @@ author.place(x=320,y=30)
 
 Label(root, text="Обьектив").place(x=10,y=200)
 obj = Combobox(root,width=5)
-obj['values'] = ("x5", "x10", "X20", "X40", "X50", "X100")
+obj['values'] = ("x2.5", "x4", "x5", "x10", "X20", "X40", "X50", "X100")
 obj.current(0) # установите вариант по умолчанию
 obj.place(x=120,y=200)
 
@@ -110,7 +111,7 @@ camera.place(x=10,y=340) #
 root.mainloop()
 	
 	
-
+#run_combine(new_path="/tmp/petro/~/Q/1/x5/2/")
 
 #show_image("/tmp/python_circle_detaction/microscope.jpg")
 
