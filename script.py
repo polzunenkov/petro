@@ -3,9 +3,11 @@ import numpy as np
 import sys
 import glob
 import os
+from PIL import Image, ImageFont, ImageDraw
+import subprocess
 
 RESIZE_FACTOR=10
-path_to_images = "/tmp/petro/1/1/x5/3/"
+path_to_images = "/tmp/petro/1/2/x5/1/"
 
 
 def load(path_to_images):
@@ -37,8 +39,8 @@ def find_circle(img):
 							   10,
 							   param1=1,
 							   param2=10,
-							   minRadius=int(0.48*w),
-							   maxRadius=int(.5*w)
+							   minRadius=int(0.18*w),
+							   maxRadius=int(.8*w)
 							   )
 	circle = circles[0,0]
 	x, y, r = int(circle[0]), int(circle[1]), int(circle[2]*0.99)
@@ -82,8 +84,61 @@ def crop(x,y,r,img1,img2):
 def combine_img(img1,img2,path_to_images):
 	vis = np.concatenate((img1, img2), axis=1)
 	cv2.imwrite(os.path.join(path_to_images,'combine.tiff'), vis)
+	
 
-
+def add_scale_bar_nicoli(path_to_images):
+		
+	image = os.path.join(path_to_images,'combine.tiff')
+	img =  cv2.imread(image)
+	w, h = img.shape[:2]
+	
+	start_point = (0, 0) #(int(h*1), int(w*1))
+	end_point = (int(h*0.05), int(w*0.1)) #(int(h*(0.92)), int(w*0.89))
+	color = (0, 0, 0)
+	thickness = -1
+	img_draw = cv2.rectangle(img, start_point, end_point, color, thickness)
+	
+	start_point = (h, 0) #(int(h*1), int(w*1))
+	end_point = (int(h-h*0.05), int(w*0.1)) #(int(h*(0.92)), int(w*0.89))
+	color = (0, 0, 0)
+	thickness = -1
+	img_draw = cv2.rectangle(img, start_point, end_point, color, thickness)
+	
+	
+	start_point = (int(h/2-h*0.05), int(0)) #(int(h*1), int(w*1))
+	end_point = (int(h/2+h*0.05), int(w*0.05)) #(int(h*(0.92)), int(w*0.89))
+	color = (0, 0, 0)
+	thickness = -1
+	img_draw = cv2.rectangle(img, start_point, end_point, color, thickness)
+	
+	
+	BLACK = (255,255,255)
+	font = cv2.FONT_HERSHEY_SIMPLEX
+	font_size = 3
+	font_color = BLACK
+	font_thickness = 3
+	
+	text = ' (-) '
+	x,y = int(h*0.0005), int(w*0.05)
+	print(x,y)
+	img_text = cv2.putText(img_draw, text, (x,y), font, font_size, font_color, font_thickness, cv2.LINE_AA)
+	
+	text = '0.5 mm'
+	x,y = int(h/2-h*0.04), int(0+w*0.03)
+	print(x,y)
+	img_text1 = cv2.putText(img_text, text, (x,y), font, font_size, font_color, font_thickness, cv2.LINE_AA)
+	
+	text = ' (+) '
+	x,y = int(h-h*0.05), int(w*0.05)
+	img_text2 = cv2.putText(img_text1, text, (x,y), font, font_size, font_color, font_thickness, cv2.LINE_AA)
+	
+	path_montage = os.path.join(path_to_images,'montage.tiff')
+	path_montage_jpg = os.path.join(path_to_images,'montage.jpg')
+	cv2.imwrite(path_montage, img_text2)
+	
+	save_montage = f"convert -resize 20% {path_montage} {path_montage_jpg}"
+	subprocess.Popen(save_montage,shell=True)
+	
 def montage(path_to_images):
 	(img1,img2) = load(path_to_images) #load photo thinsiction
 	rimg = resize_img(RESIZE_FACTOR,img1) #resize photo thinsiction
@@ -92,6 +147,7 @@ def montage(path_to_images):
 	img1_mask, img2_mask  = mask_to_img(img1,img2,x, y, r) #put mask to thinsection photo
 	crop_img1, crop_img2 = crop(x,y,r,img1_mask, img2_mask) 
 	combine_img(crop_img1, crop_img2, path_to_images) #combine two photo (-,+) thinsection
+	add_scale_bar_nicoli(path_to_images)
 
 
 if __name__== "__main__":
