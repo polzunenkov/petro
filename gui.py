@@ -10,30 +10,24 @@ def camera_on():
 	i = 0
 	#The interval between operations depends on the phone configuration. The higher the configuration, the shorter the time.
 	sleep_time = 0.5 
-	#while 1:
 	#Use popen to set shell=True will not pop up cmd box
 	subprocess.Popen('scrcpy',shell=True)
 	time.sleep(sleep_time)
 	subprocess.Popen('adb shell am start -a android.media.action.STILL_IMAGE_CAMERA',shell=True)
-	#subprocess.run(["mkdir", "-p", "test"])
-	#i+=1
-        #print str(i) + "clicks have been completed"
-        
-        #os.system("adb shell")
-        #os.system("am start -a android.media.action.STILL_IMAGE_CAMERA")
+	
 	
 def photo_make():
 	subprocess.Popen('adb shell input keyevent 27',shell=True)
 
-def param(collection, thinsection, obj, uch, chk_state):
-	save_thinsection_photo = f"python3.7 thinsection.py --path={collection.get()} --thinsection_name={thinsection.get()} --lense_name={obj.get()} --uch_name={uch.get()} --montage"
+def param(collection, thinsection, obj, uch, chk_state, diametr):
+	save_thinsection_photo = f"python3.7 thinsection.py --path={collection.get()} --thinsection_name={thinsection.get()} --lense_name={obj.get()} --uch_name={uch.get()} --montage --diametr_pole={diametr.get()} "
 	print(save_thinsection_photo)
 	subprocess.Popen(str(save_thinsection_photo),shell=True)
 	
 class Application:
     def __init__(self, root):
         self.root = root
-        img = Image.open("microscope.jpg")
+        img = Image.open("/tmp/petro/microscope.jpg")
         w = 500
         ratio = (w / float(img.size[0]))
         h = int((float(img.size[1]) * float(ratio)))
@@ -51,6 +45,11 @@ class Application:
         Label(self.root, text="Автор").place(x=250,y=30)
         author = Entry(self.root,width=20)
         author.place(x=320,y=30)
+        
+        
+        Label(self.root, text="Диаметр поле зрения, мм").place(x=250,y=60)
+        diametr = Entry(self.root,width=5)
+        diametr.place(x=320,y=60)
 
         Label(self.root, text="Обьектив").place(x=10,y=200)
         obj = Combobox(self.root,width=5)
@@ -84,7 +83,7 @@ class Application:
         chk.place(x=100, y=340)
         
         
-        btn = Button(self.root, text=">", height = 6, width = 8, command=lambda: param(collection, thinsection, obj, uch, chk_state))
+        btn = Button(self.root, text=">", height = 6, width = 8, command=lambda: param(collection, thinsection, obj, uch, chk_state, diametr))
         btn.place(x=420,y=180)
 		
 		

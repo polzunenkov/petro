@@ -7,7 +7,6 @@ from PIL import Image, ImageFont, ImageDraw
 import subprocess
 
 RESIZE_FACTOR=10
-path_to_images = "/tmp/petro/1/2/x5/1/"
 
 
 def load(path_to_images):
@@ -48,6 +47,7 @@ def find_circle(img):
 
 
 def initial_coordinates_radius(x_r, y_r, r_r, resize_factor):
+	""" Возвращает истинный значения координат центра и радиуса круга"""
 	x = x_r*resize_factor
 	y = y_r*resize_factor
 	r = r_r*resize_factor
@@ -55,6 +55,7 @@ def initial_coordinates_radius(x_r, y_r, r_r, resize_factor):
 	
 
 def mask_to_img(img,img1,x,y,r):
+	""" Заменяет черные пиксели по краям фото на белый цвет """
 	h, w = img.shape[:2]
 	circle_img = np.zeros((h,w), np.uint8)
 	cv2.circle(circle_img,(x,y),r,1,thickness=-1)
@@ -64,6 +65,7 @@ def mask_to_img(img,img1,x,y,r):
 
 
 def crop(x,y,r,img1,img2):
+	""" Обрезает фотографии"""
 	w, h = img1.shape[:2]
 	y0 = y-r
 	y1 = y+r
@@ -82,64 +84,71 @@ def crop(x,y,r,img1,img2):
 	return crop_img1, crop_img2
 
 def combine_img(img1,img2,path_to_images):
+	""" Обьединяет две фотографии"""
 	vis = np.concatenate((img1, img2), axis=1)
 	cv2.imwrite(os.path.join(path_to_images,'combine.tiff'), vis)
 	
 
-def add_scale_bar_nicoli(path_to_images):
-		
+def add_text_to_image(img, text, x,y, font = cv2.FONT_HERSHEY_SIMPLEX, size = 3, color = (255,255,255), thickness= 3, line = cv2.LINE_AA):
+	""" Пишет на фото"""
+	cv2.putText(img,
+		 	   text,
+			   (x,y),
+			   font,
+			   size,
+			   color,
+			   thickness,
+			   line)
+
+
+def add_draw_to_image(img, start_point, end_point, color= (0, 0, 0), thickness = -1):
+	""" Рисует на фото"""
+	img_draw = cv2.rectangle(img,
+							 start_point,
+							 end_point,
+							 color,
+							 thickness)
+	
+
+def convert_px_to_mm(img,diametr_pole):
+	""" Пересчет координат из px в mm"""
+	w, h = img.shape[:2]
+	parts = 8
+	#diametr_pole = 4
+	h_mm = diametr_pole*2
+	h_parts = h/parts
+	h_mm_parts = h_mm/parts
+	start_scale_h = int(3.5 * h_parts)
+	end_scale_h = int(4.5 * h_parts)
+	start_scale_w = int(0)
+	end_scale_w = int(0.2* h_parts)
+	value_scale_bar_mm = str(h_mm/h*h_parts)
+	start = (start_scale_h,start_scale_w)
+	end = (end_scale_h, end_scale_w)
+	return  w, h, start, end, value_scale_bar_mm
+	
+
+def add_scale_bar_nicoli(path_to_images,diametr_pole):
+	""" добавляет подписи николей и масштабную линейку на фото
+		сохраняет фото в *.tiff и .jpg (уменьшеном) формате"""
 	image = os.path.join(path_to_images,'combine.tiff')
 	img =  cv2.imread(image)
-	w, h = img.shape[:2]
-	
-	start_point = (0, 0) #(int(h*1), int(w*1))
-	end_point = (int(h*0.05), int(w*0.1)) #(int(h*(0.92)), int(w*0.89))
-	color = (0, 0, 0)
-	thickness = -1
-	img_draw = cv2.rectangle(img, start_point, end_point, color, thickness)
-	
-	start_point = (h, 0) #(int(h*1), int(w*1))
-	end_point = (int(h-h*0.05), int(w*0.1)) #(int(h*(0.92)), int(w*0.89))
-	color = (0, 0, 0)
-	thickness = -1
-	img_draw = cv2.rectangle(img, start_point, end_point, color, thickness)
-	
-	
-	start_point = (int(h/2-h*0.05), int(0)) #(int(h*1), int(w*1))
-	end_point = (int(h/2+h*0.05), int(w*0.05)) #(int(h*(0.92)), int(w*0.89))
-	color = (0, 0, 0)
-	thickness = -1
-	img_draw = cv2.rectangle(img, start_point, end_point, color, thickness)
-	
-	
-	BLACK = (255,255,255)
-	font = cv2.FONT_HERSHEY_SIMPLEX
-	font_size = 3
-	font_color = BLACK
-	font_thickness = 3
-	
-	text = ' (-) '
-	x,y = int(h*0.0005), int(w*0.05)
-	print(x,y)
-	img_text = cv2.putText(img_draw, text, (x,y), font, font_size, font_color, font_thickness, cv2.LINE_AA)
-	
-	text = '0.5 mm'
-	x,y = int(h/2-h*0.04), int(0+w*0.03)
-	print(x,y)
-	img_text1 = cv2.putText(img_text, text, (x,y), font, font_size, font_color, font_thickness, cv2.LINE_AA)
-	
-	text = ' (+) '
-	x,y = int(h-h*0.05), int(w*0.05)
-	img_text2 = cv2.putText(img_text1, text, (x,y), font, font_size, font_color, font_thickness, cv2.LINE_AA)
-	
+	w, h, start, end, value_scale_bar_mm = convert_px_to_mm(img,diametr_pole)
+	add_draw_to_image(img, start_point = start, end_point = end) 
+	add_draw_to_image(img, start_point = (h, 0), end_point = (int(h-h*0.05), int(w*0.1))) 
+	add_draw_to_image(img, start_point = (0, 0), end_point = (int(h*0.05), int(w*0.1)))
+	add_text_to_image(img, text = ' (||) ', x = int(h*0.0005) ,y = int(w*0.05) )
+	add_text_to_image(img, text = ' (+) ', x = int(h-h*0.05) ,y = int(w*0.05))
+	add_text_to_image(img, text = value_scale_bar_mm+' mm', x = int(h/2-h*0.04) ,y = int(0+w*0.03))
 	path_montage = os.path.join(path_to_images,'montage.tiff')
 	path_montage_jpg = os.path.join(path_to_images,'montage.jpg')
-	cv2.imwrite(path_montage, img_text2)
-	
+	cv2.imwrite(path_montage, img)
 	save_montage = f"convert -resize 20% {path_montage} {path_montage_jpg}"
 	subprocess.Popen(save_montage,shell=True)
 	
-def montage(path_to_images):
+def montage(path_to_images, diametr_pole):
+	""" обьединяет фото с разными николями """
+	print("диаметр поле", diametr_pole)
 	(img1,img2) = load(path_to_images) #load photo thinsiction
 	rimg = resize_img(RESIZE_FACTOR,img1) #resize photo thinsiction
 	x_r, y_r, r_r = find_circle(rimg) #find in resise photo thinsection coordinates centre and radius circle
@@ -147,9 +156,9 @@ def montage(path_to_images):
 	img1_mask, img2_mask  = mask_to_img(img1,img2,x, y, r) #put mask to thinsection photo
 	crop_img1, crop_img2 = crop(x,y,r,img1_mask, img2_mask) 
 	combine_img(crop_img1, crop_img2, path_to_images) #combine two photo (-,+) thinsection
-	add_scale_bar_nicoli(path_to_images)
+	add_scale_bar_nicoli(path_to_images,diametr_pole)
 
 
 if __name__== "__main__":
-	montage(path_to_images)
+	montage(path_to_images,diametr_pole)
 
