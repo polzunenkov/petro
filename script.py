@@ -39,7 +39,7 @@ def find_circle(img):
 							   param1=1,
 							   param2=10,
 							   minRadius=int(0.18*w),
-							   maxRadius=int(.8*w)
+							   maxRadius=int(0.8*w)
 							   )
 	circle = circles[0,0]
 	x, y, r = int(circle[0]), int(circle[1]), int(circle[2]*0.99)
@@ -144,24 +144,35 @@ def add_scale_bar_nicoli(path_to_images,diametr_pole):
 	cv2.imwrite(path_montage, img)
 	save_montage = f"convert -resize 20% {path_montage} {path_montage_jpg}"
 	subprocess.Popen(save_montage,shell=True)
-	
+
+
+def show_img_montage(path_to_images):
+	image = cv2.imread(os.path.join(path_to_images,'montage.jpeg'))
+	cv2.imshow(str(path_to_images), image)
+	cv2.waitKey(0)
+	cv2.destroyAllWindows() 
+
 def montage(path_to_images, diametr_pole):
 	""" обьединяет фото с разными николями """
 	print("диаметр поле", diametr_pole)
 	(img1,img2) = load(path_to_images) #load photo thinsiction
-	rimg = resize_img(RESIZE_FACTOR,img1) #resize photo thinsiction
-	
+	rimg1 = resize_img(RESIZE_FACTOR,img1) #resize photo thinsiction
+	rimg2 = resize_img(RESIZE_FACTOR,img2)
 	try:
-		x_r, y_r, r_r = find_circle(rimg) #find in resise photo thinsection coordinates centre and radius circle
+		x_r, y_r, r_r = find_circle(rimg1) #find in resise photo thinsection coordinates centre and radius circle
 	except TypeError:
-		print("Ошибка! Круг не найдет")
-		return
+		try:
+			x_r, y_r, r_r = find_circle(rimg2)
+		except TypeError:
+			print("Ошибка! Круг не найдет")
+			return
 
 	x, y, r = initial_coordinates_radius(x_r, y_r, r_r, RESIZE_FACTOR) #convert coordinates centre and radius circle to initial size photo
 	img1_mask, img2_mask  = mask_to_img(img1,img2,x, y, r) #put mask to thinsection photo
 	crop_img1, crop_img2 = crop(x,y,r,img1_mask, img2_mask) 
 	combine_img(crop_img1, crop_img2, path_to_images) #combine two photo (-,+) thinsection
 	add_scale_bar_nicoli(path_to_images,diametr_pole)
+	show_img_montage(path_to_images)
 
 
 if __name__== "__main__":
