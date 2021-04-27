@@ -20,20 +20,22 @@ def photo_make():
 	subprocess.Popen('adb shell input keyevent 27',shell=True)
 
 def param(collection, thinsection, obj, uch, chk_state, diametr):
-	save_thinsection_photo = f"python3.7 thinsection.py --path={collection.get()} --thinsection_name={thinsection.get()} --lense_name={obj.get()} --uch_name={uch.get()} --montage --diametr_pole={diametr.get()} "
+	save_thinsection_photo = f"python3.7 thinsection.py --path={collection.get()} --thinsection_name={thinsection.get()} --lense_name={obj.get()} --uch_name={uch.get()} --diametr_pole={diametr.get()} --do_not_remove_from_phone"
+	if chk_state.get() == 1:
+		save_thinsection_photo += " --montage"
 	print(save_thinsection_photo)
 	subprocess.Popen(str(save_thinsection_photo),shell=True)
 	
 class Application:
-    def __init__(self, root):
-        self.root = root
+    def __init__(self):
+        self.root =  Tk()
         img = Image.open("/tmp/petro/microscope.jpg")
         w = 500
         ratio = (w / float(img.size[0]))
         h = int((float(img.size[1]) * float(ratio)))
         imag = img.resize((w,h), Image.ANTIALIAS)
-        image = ImageTk.PhotoImage(imag)
-        panel = Label(self.root, image=image)
+        images = ImageTk.PhotoImage(imag)
+        panel = Label( image=images)
         panel.pack(side="top", fill="both", expand="no")
         self.root.title("Фотографии шлифов")
 
@@ -85,8 +87,7 @@ class Application:
         
         btn = Button(self.root, text=">", height = 6, width = 8, command=lambda: param(collection, thinsection, obj, uch, chk_state, diametr))
         btn.place(x=420,y=180)
-		
-		
+        self.root.mainloop()
 		#Label(root, text="Николи").place(x=30,y=380)
         #nicoli_minus = Button(root, text="-", command=photo_make, height = 3, width = 4)
         #nicoli_minus.place(x=10,y=410) #
@@ -97,9 +98,8 @@ class Application:
         
 
 def main():
-    root = Tk()
-    app = Application(root)
-    root.mainloop()
+    app = Application()
+    
 
 if __name__ == '__main__':
     main()

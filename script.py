@@ -114,7 +114,6 @@ def convert_px_to_mm(img,diametr_pole):
 	""" Пересчет координат из px в mm"""
 	w, h = img.shape[:2]
 	parts = 8
-	#diametr_pole = 4
 	h_mm = diametr_pole*2
 	h_parts = h/parts
 	h_mm_parts = h_mm/parts
@@ -141,7 +140,7 @@ def add_scale_bar_nicoli(path_to_images,diametr_pole):
 	add_text_to_image(img, text = ' (+) ', x = int(h-h*0.05) ,y = int(w*0.05))
 	add_text_to_image(img, text = value_scale_bar_mm+' mm', x = int(h/2-h*0.04) ,y = int(0+w*0.03))
 	path_montage = os.path.join(path_to_images,'montage.tiff')
-	path_montage_jpg = os.path.join(path_to_images,'montage.jpg')
+	path_montage_jpg = os.path.join(path_to_images,'montage.jpeg')
 	cv2.imwrite(path_montage, img)
 	save_montage = f"convert -resize 20% {path_montage} {path_montage_jpg}"
 	subprocess.Popen(save_montage,shell=True)
@@ -151,7 +150,13 @@ def montage(path_to_images, diametr_pole):
 	print("диаметр поле", diametr_pole)
 	(img1,img2) = load(path_to_images) #load photo thinsiction
 	rimg = resize_img(RESIZE_FACTOR,img1) #resize photo thinsiction
-	x_r, y_r, r_r = find_circle(rimg) #find in resise photo thinsection coordinates centre and radius circle
+	
+	try:
+		x_r, y_r, r_r = find_circle(rimg) #find in resise photo thinsection coordinates centre and radius circle
+	except TypeError:
+		print("Ошибка! Круг не найдет")
+		return
+
 	x, y, r = initial_coordinates_radius(x_r, y_r, r_r, RESIZE_FACTOR) #convert coordinates centre and radius circle to initial size photo
 	img1_mask, img2_mask  = mask_to_img(img1,img2,x, y, r) #put mask to thinsection photo
 	crop_img1, crop_img2 = crop(x,y,r,img1_mask, img2_mask) 
