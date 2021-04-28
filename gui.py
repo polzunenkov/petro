@@ -19,8 +19,8 @@ def camera_on():
 def photo_make():
 	subprocess.Popen('adb shell input keyevent 27',shell=True)
 
-def param(collection, thinsection, obj, uch, chk_state, diametr):
-	save_thinsection_photo = f"python3.7 thinsection.py --path={collection.get()} --thinsection_name={thinsection.get()} --lense_name={obj.get()} --uch_name={uch.get()} --diametr_pole={diametr.get()} --do_not_remove_from_phone"
+def param(collection, thinsection, obj, uch, chk_state):
+	save_thinsection_photo = f"python3.7 thinsection.py --path={collection.get()} --thinsection_name={thinsection.get()} --lense_name={obj.get()} --uch_name={uch.get()} --pattern='*.jpg' "
 	if chk_state.get() == 1:
 		save_thinsection_photo += " --montage"
 	print(save_thinsection_photo)
@@ -29,7 +29,7 @@ def param(collection, thinsection, obj, uch, chk_state, diametr):
 class Application:
     def __init__(self):
         self.root =  Tk()
-        img = Image.open("/tmp/petro/microscope.jpg")
+        img = Image.open("microscope.jpg")
         w = 500
         ratio = (w / float(img.size[0]))
         h = int((float(img.size[1]) * float(ratio)))
@@ -48,21 +48,18 @@ class Application:
         author = Entry(self.root,width=20)
         author.place(x=320,y=30)
         
-        Label(self.root, text="Обьектив").place(x=10,y=200)
+        Label(self.root, text="Обьектив").place(x=10,y=250)
         obj = Combobox(self.root,width=5)
-        obj['values'] = ("x5", "x10", "X20", "X40", "X50", "X100")
+        obj['values'] = ("x5", "x10", "x20", "x40", "x60","x80", "x100")
         obj.current(0) # установите вариант по умолчанию
-        obj.place(x=120,y=200)
-        
-        Label(self.root, text="d поле, мм").place(x=10,y=225)
-        diametr = Entry(self.root,width=5)
-        diametr.place(x=120,y=225)
-        
-        Label(self.root, text="№ шлифа").place(x=10,y=250)
+        obj.place(x=120,y=250)
+                
+               
+        Label(self.root, text="Шлиф").place(x=10,y=225)
         thinsection = Entry(self.root,width=15)
-        thinsection.place(x=120,y=250)
+        thinsection.place(x=120,y=225)
 
-        Label(self.root, text="№ учатска").place(x=10,y=275)
+        Label(self.root, text="Участок").place(x=10,y=275)
         #uch = Entry(root,width=5)
         #uch.place(x=150,y=300)
 
@@ -77,9 +74,9 @@ class Application:
         chk.place(x=10, y=325)
         
         camera = Button(self.root, text="Камера", command=camera_on, height = 8, width = 10)
-        camera.place(x=400,y=50)
+        camera.place(x=10,y=100)
         
-        btn = Button(self.root, text="Фото", height = 8, width = 10, command=lambda: param(collection, thinsection, obj, uch, chk_state, diametr))
+        btn = Button(self.root, text="Фото", height = 8, width = 10, command=lambda: param(collection, thinsection, obj, uch, chk_state))
         btn.place(x=10,y=350)
         
         

@@ -48,14 +48,12 @@ def del_photo_folder(pattern):
               default="x5")
 @click.option('--uch_name', help='name of the uch used', 
               default="1")
-@click.option('--diametr_pole', help=' diametr pole', type=float,
-              default=1)
 @click.option('--montage', help='combine photo after change black by white from mask circle', 
               is_flag=True, default=False)
-@click.option('--do_not_remove_from_phone', '-D', 
+@click.option('--do_not_remove_from_phone',
               help='remove phtos from phone folder ', 
               is_flag=True, default=False)
-def main(path, pattern, thinsection_name, lense_name, uch_name, diametr_pole, montage, do_not_remove_from_phone):
+def main(path, pattern, thinsection_name, lense_name, uch_name, montage, do_not_remove_from_phone):
 	'''
 	Копирует файлы с камеры телефона на компьютер
 	'''
@@ -64,9 +62,9 @@ def main(path, pattern, thinsection_name, lense_name, uch_name, diametr_pole, mo
 	click.echo(old_path)
 	click.echo(new_path)
 	copy(old_path,new_path)
-	print("дмаметр поле", diametr_pole)
+	print("дмаметр поле", lense_name)
 	if montage:
-		montage_(new_path, diametr_pole)
+		montage_(new_path, lense_name)
 	
 	if not do_not_remove_from_phone:
 		del_photo_folder(pattern)

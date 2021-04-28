@@ -33,7 +33,6 @@ def combine_img(img1,img2,path_to_images):
 	rimg1 = resize_img(resize_factor,img1)
 	rimg2 = resize_img(resize_factor,img2)
 	combine_image = np.concatenate((rimg1, rimg2), axis=1)
-	#cv2.imwrite(os.path.join(path_to_images,'montage.jpeg'), combine_image)
 	return combine_image
 
 def find_circle(img):
@@ -160,11 +159,28 @@ def convert_px_to_mm(img,diametr_pole):
 	end = (end_scale_h, end_scale_w)
 	return  w, h, start, end, value_scale_bar_mm
 	
+def read_config_lense():
+	# открываем файл, обязательно указывая режим и кодировку
+	with open(r'config', mode='r', encoding='utf-8') as fl:
+	# считываем содержимое файлам одним списком стром
+		onstring = fl.readlines()
+	
+	lens = {}
+	
+	for i in onstring:
+		k, v = i.split(',')
+		v = v.strip()
+		v = float(v)
+		# добавляем в словарь соответствующие пары ключ:значение
+		lens[k] =  v
+	return lens
 
-def add_scale_bar_nicoli(path_to_images,combine_image,diametr_pole):
+def add_scale_bar_nicoli(path_to_images,combine_image,lense_name):
 	""" добавляет подписи николей и масштабную линейку на фото
 		сохраняет фото в .jpg (уменьшеном) формате"""
 	img =  combine_image
+	lens = read_config_lense()
+	diametr_pole = lens.get(lense_name)
 	w, h, start, end, value_scale_bar_mm = convert_px_to_mm(img,diametr_pole)
 	add_draw_to_image(img, start_point = start, end_point = end) 
 	add_draw_to_image(img, start_point = (h, 0), end_point = (int(h-h*0.05), int(w*0.1))) 
@@ -182,16 +198,17 @@ def add_scale_bar_nicoli(path_to_images,combine_image,diametr_pole):
 
 def show_img_montage(path_to_images):
 	image = cv2.imread(os.path.join(path_to_images,'montage.jpeg'))
-	cv2.imshow(str(path_to_images), image)
-	cv2.waitKey(0)
+	cv2.imshow('montage', image)
+	cv2.waitKey()
 	cv2.destroyAllWindows() 
 
-def montage(path_to_images, diametr_pole):
+def montage(path_to_images, lense_name):
 	""" обьединяет фото с разными николями """
-	print("диаметр поле", diametr_pole)
+	print("диаметр поле", lense_name)
 	(img1,img2) = load(path_to_images) #load photo thinsiction
 	rimg1 = resize_img(RESIZE_FACTOR,img1) #resize photo thinsiction
 	rimg2 = resize_img(RESIZE_FACTOR,img2)
+	x_r, y_r, r_r = find_circle_(rimg1)
 	try:
 		x_r, y_r, r_r = find_circle_(rimg1) #find in resise photo thinsection coordinates centre and radius circle
 	except TypeError:
@@ -205,8 +222,8 @@ def montage(path_to_images, diametr_pole):
 	img1_mask, img2_mask  = mask_to_img(img1,img2,x, y, r) #put mask to thinsection photo
 	crop_img1, crop_img2 = crop(x,y,r,img1_mask, img2_mask) 
 	combine_image = combine_img(crop_img1, crop_img2, path_to_images) #combine two photo (-,+) thinsection
-	add_scale_bar_nicoli(path_to_images, combine_image,diametr_pole)
-	time.sleep(4)
+	add_scale_bar_nicoli(path_to_images, combine_image,lense_name)
+	time.sleep(5)
 	show_img_montage(path_to_images)
 
 
