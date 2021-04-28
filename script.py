@@ -5,6 +5,7 @@ import glob
 import os
 from PIL import Image, ImageFont, ImageDraw
 import subprocess
+import time
 
 RESIZE_FACTOR=10
 
@@ -45,6 +46,35 @@ def find_circle(img):
 	x, y, r = int(circle[0]), int(circle[1]), int(circle[2]*0.99)
 	return x, y, r
 
+def find_circle_(img):
+	""" Поиск круга на фотографии, возвращает координаты центра и радиус первого найденного круга """
+	hh, ww = img.shape[:2]
+	
+	# threshold on white
+	# Define lower and uppper limits
+	lower = np.array([100, 100, 100])
+	upper = np.array([255, 255, 255])
+	
+	# Create mask to only select black
+	thresh = cv2.inRange(img, lower, upper)
+	
+	# get convex hull
+	points = np.column_stack(np.where(thresh.transpose() > 0))
+	hullpts = cv2.convexHull(points)
+	((centx,centy), (width,height), angle) = cv2.fitEllipse(hullpts)
+	
+	# draw convex hull on image
+	hull = img.copy()
+	
+	# create new circle mask from ellipse
+	circle = np.zeros((hh,ww), dtype=np.uint8)
+	x = int(centx)
+	y = int(centy)
+	r = int((width+height)/4)
+	cv2.circle(hull, (x,y), r, (0,0,255), 2)
+	return x, y, r
+	
+	
 
 def initial_coordinates_radius(x_r, y_r, r_r, resize_factor):
 	""" Возвращает истинный значения координат центра и радиуса круга"""
@@ -86,7 +116,7 @@ def crop(x,y,r,img1,img2):
 def combine_img(img1,img2,path_to_images):
 	""" Обьединяет две фотографии"""
 	vis = np.concatenate((img1, img2), axis=1)
-	cv2.imwrite(os.path.join(path_to_images,'combine.tiff'), vis)
+	cv2.imwrite(os.path.join(path_to_images,'montage.tiff'), vis)
 	
 
 def add_text_to_image(img, text, x,y, font = cv2.FONT_HERSHEY_SIMPLEX, size = 3, color = (255,255,255), thickness= 3, line = cv2.LINE_AA):
@@ -130,7 +160,7 @@ def convert_px_to_mm(img,diametr_pole):
 def add_scale_bar_nicoli(path_to_images,diametr_pole):
 	""" добавляет подписи николей и масштабную линейку на фото
 		сохраняет фото в *.tiff и .jpg (уменьшеном) формате"""
-	image = os.path.join(path_to_images,'combine.tiff')
+	image = os.path.join(path_to_images,'montage.tiff')
 	img =  cv2.imread(image)
 	w, h, start, end, value_scale_bar_mm = convert_px_to_mm(img,diametr_pole)
 	add_draw_to_image(img, start_point = start, end_point = end) 
@@ -139,10 +169,10 @@ def add_scale_bar_nicoli(path_to_images,diametr_pole):
 	add_text_to_image(img, text = ' (||) ', x = int(h*0.0005) ,y = int(w*0.05) )
 	add_text_to_image(img, text = ' (+) ', x = int(h-h*0.05) ,y = int(w*0.05))
 	add_text_to_image(img, text = value_scale_bar_mm+' mm', x = int(h/2-h*0.04) ,y = int(0+w*0.03))
-	path_montage = os.path.join(path_to_images,'montage.tiff')
+	#path_montage = os.path.join(path_to_images,'montage.tiff')
+	cv2.imwrite(image, img)
 	path_montage_jpg = os.path.join(path_to_images,'montage.jpeg')
-	cv2.imwrite(path_montage, img)
-	save_montage = f"convert -resize 20% {path_montage} {path_montage_jpg}"
+	save_montage = f"convert -resize 20% {image} {path_montage_jpg}"
 	subprocess.Popen(save_montage,shell=True)
 
 
@@ -159,10 +189,10 @@ def montage(path_to_images, diametr_pole):
 	rimg1 = resize_img(RESIZE_FACTOR,img1) #resize photo thinsiction
 	rimg2 = resize_img(RESIZE_FACTOR,img2)
 	try:
-		x_r, y_r, r_r = find_circle(rimg1) #find in resise photo thinsection coordinates centre and radius circle
+		x_r, y_r, r_r = find_circle_(rimg1) #find in resise photo thinsection coordinates centre and radius circle
 	except TypeError:
 		try:
-			x_r, y_r, r_r = find_circle(rimg2)
+			x_r, y_r, r_r = find_circle_(rimg2)
 		except TypeError:
 			print("Ошибка! Круг не найдет")
 			return
@@ -172,6 +202,7 @@ def montage(path_to_images, diametr_pole):
 	crop_img1, crop_img2 = crop(x,y,r,img1_mask, img2_mask) 
 	combine_img(crop_img1, crop_img2, path_to_images) #combine two photo (-,+) thinsection
 	add_scale_bar_nicoli(path_to_images,diametr_pole)
+	time.sleep(4)
 	show_img_montage(path_to_images)
 
 
