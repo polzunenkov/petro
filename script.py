@@ -115,8 +115,11 @@ def crop(x,y,r,img1,img2):
 
 def combine_img(img1,img2,path_to_images):
 	""" Обьединяет две фотографии"""
-	vis = np.concatenate((img1, img2), axis=1)
-	cv2.imwrite(os.path.join(path_to_images,'montage.tiff'), vis)
+	resize_factor = 0.5
+	rimg1 = resize_img(resize_factor,img1)
+	rimg2 = resize_img(resize_factor,img2)
+	combine_image = np.concatenate((rimg1, rimg2), axis=1)
+	cv2.imwrite(os.path.join(path_to_images,'montage.jpeg'), combine_image)
 	
 
 def add_text_to_image(img, text, x,y, font = cv2.FONT_HERSHEY_SIMPLEX, size = 3, color = (255,255,255), thickness= 3, line = cv2.LINE_AA):
@@ -160,15 +163,17 @@ def convert_px_to_mm(img,diametr_pole):
 def add_scale_bar_nicoli(path_to_images,diametr_pole):
 	""" добавляет подписи николей и масштабную линейку на фото
 		сохраняет фото в *.tiff и .jpg (уменьшеном) формате"""
-	image = os.path.join(path_to_images,'montage.tiff')
+	image = os.path.join(path_to_images,'montage.jpeg')
 	img =  cv2.imread(image)
 	w, h, start, end, value_scale_bar_mm = convert_px_to_mm(img,diametr_pole)
 	add_draw_to_image(img, start_point = start, end_point = end) 
 	add_draw_to_image(img, start_point = (h, 0), end_point = (int(h-h*0.05), int(w*0.1))) 
 	add_draw_to_image(img, start_point = (0, 0), end_point = (int(h*0.05), int(w*0.1)))
-	add_text_to_image(img, text = ' (||) ', x = int(h*0.0005) ,y = int(w*0.05) )
-	add_text_to_image(img, text = ' (+) ', x = int(h-h*0.05) ,y = int(w*0.05))
-	add_text_to_image(img, text = value_scale_bar_mm+' mm', x = int(h/2-h*0.04) ,y = int(0+w*0.03))
+	size_text = 6
+	thickness_text = 10
+	add_text_to_image(img, text = ' (||) ', size = size_text, thickness = thickness_text, x = int(h*0.0005) ,y = int(w*0.05) )
+	add_text_to_image(img, text = ' (+) ', size = size_text,  thickness = thickness_text, x = int(h-h*0.05) ,y = int(w*0.05))
+	add_text_to_image(img, text = value_scale_bar_mm+' mm', size = size_text, thickness = thickness_text, x = int(h/2-h*0.04) ,y = int(0+w*0.035))
 	#path_montage = os.path.join(path_to_images,'montage.tiff')
 	cv2.imwrite(image, img)
 	path_montage_jpg = os.path.join(path_to_images,'montage.jpeg')
