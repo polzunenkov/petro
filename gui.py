@@ -37,7 +37,7 @@ class Application:
         images = ImageTk.PhotoImage(imag)
         panel = Label( image=images)
         panel.pack(side="top", fill="both", expand="no")
-        self.root.title("Фотографии шлифов")
+        self.root.title("PETRO PHOTO")
 
         Label(self.root, text="Коллекция").place(x=200,y=10)
         collection = Entry(self.root,width=20)
@@ -48,45 +48,45 @@ class Application:
         author = Entry(self.root,width=20)
         author.place(x=320,y=30)
         
-        
-        Label(self.root, text="Диаметр поле зрения, мм").place(x=250,y=60)
-        diametr = Entry(self.root,width=5)
-        diametr.place(x=320,y=60)
-
         Label(self.root, text="Обьектив").place(x=10,y=200)
         obj = Combobox(self.root,width=5)
         obj['values'] = ("x5", "x10", "X20", "X40", "X50", "X100")
         obj.current(0) # установите вариант по умолчанию
         obj.place(x=120,y=200)
-
+        
+        Label(self.root, text="d поле, мм").place(x=10,y=225)
+        diametr = Entry(self.root,width=5)
+        diametr.place(x=120,y=225)
+        
         Label(self.root, text="№ шлифа").place(x=10,y=250)
         thinsection = Entry(self.root,width=15)
-        thinsection.place(x=150,y=250)
+        thinsection.place(x=120,y=250)
 
-        Label(self.root, text="№ учатска").place(x=10,y=300)
+        Label(self.root, text="№ учатска").place(x=10,y=275)
         #uch = Entry(root,width=5)
         #uch.place(x=150,y=300)
 
         uch = Spinbox(self.root, from_=1, to=5, width=4)  
-        uch.place(x=150,y=300)  
-
-
-        GO = Button(self.root, text="Выход", command=self.root.quit, height = 6, width = 8)
-        GO.place(x=420,y=300) #
-
-
-
-        camera = Button(self.root, text="Камера", command=camera_on, height = 8, width = 10)
-        camera.place(x=10,y=340)
+        uch.place(x=120,y=275)
+        
+                
         chk_state = IntVar()
         chk_state.set(0) # False
         chk_state.set(1) # True
         chk = Checkbutton(self.root, text='Монтаж', var=chk_state)
-        chk.place(x=100, y=340)
+        chk.place(x=10, y=325)
+        
+        camera = Button(self.root, text="Камера", command=camera_on, height = 8, width = 10)
+        camera.place(x=400,y=50)
+        
+        btn = Button(self.root, text="Фото", height = 8, width = 10, command=lambda: param(collection, thinsection, obj, uch, chk_state, diametr))
+        btn.place(x=10,y=350)
         
         
-        btn = Button(self.root, text=">", height = 6, width = 8, command=lambda: param(collection, thinsection, obj, uch, chk_state, diametr))
-        btn.place(x=420,y=180)
+        GO = Button(self.root, text="Выход", command=self.root.quit, height = 8, width = 10)
+        GO.place(x=400,y=350) #
+
+
         self.root.mainloop()
 		#Label(root, text="Николи").place(x=30,y=380)
         #nicoli_minus = Button(root, text="-", command=photo_make, height = 3, width = 4)
