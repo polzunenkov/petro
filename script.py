@@ -29,10 +29,11 @@ def resize_img(resize_factor,img):
 
 def combine_img(img1,img2,path_to_images):
 	""" Обьединяет две фотографии"""
-	resize_factor = 0.5
+	resize_factor = 5
 	rimg1 = resize_img(resize_factor,img1)
 	rimg2 = resize_img(resize_factor,img2)
 	combine_image = np.concatenate((rimg1, rimg2), axis=1)
+	
 	return combine_image
 
 def find_circle(img):
@@ -185,15 +186,18 @@ def add_scale_bar_nicoli(path_to_images,combine_image,lense_name):
 	add_draw_to_image(img, start_point = start, end_point = end) 
 	add_draw_to_image(img, start_point = (h, 0), end_point = (int(h-h*0.05), int(w*0.1))) 
 	add_draw_to_image(img, start_point = (0, 0), end_point = (int(h*0.05), int(w*0.1)))
-	size_text = 6
-	thickness_text = 10
+	koef_size = 6/11680
+	size_text = h*koef_size
+	koef_thickness_text = 18/6
+	thickness_text = int(size_text*koef_thickness_text)
 	add_text_to_image(img, text = ' (||) ', size = size_text, thickness = thickness_text, x = int(h*0.0005) ,y = int(w*0.05) )
 	add_text_to_image(img, text = ' (+) ', size = size_text,  thickness = thickness_text, x = int(h-h*0.05) ,y = int(w*0.05))
 	add_text_to_image(img, text = value_scale_bar_mm+' mm', size = size_text, thickness = thickness_text, x = int(h/2-h*0.04) ,y = int(0+w*0.035))
 	path_montage_jpg = os.path.join(path_to_images,'montage.jpeg')
+	#img = resize_img(10, img)
 	cv2.imwrite(path_montage_jpg, img)
-	save_montage = f"convert -resize 15% {path_montage_jpg} {path_montage_jpg}"
-	subprocess.Popen(save_montage,shell=True)
+	#save_montage = f"convert -resize 15% {path_montage_jpg} {path_montage_jpg}"
+	#subprocess.Popen(save_montage,shell=True)
 
 
 def show_img_montage(path_to_images):
