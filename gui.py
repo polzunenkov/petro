@@ -5,6 +5,31 @@ import time
 import subprocess
 
 
+
+def open_config():
+	subprocess.Popen('gedit config',shell=True)
+
+def on_select(event, obj):
+	lens = read_config_lense()
+	print("on_select")
+	obj['values'] = (list(lens.keys()))
+
+def read_config_lense():
+	# открываем файл, обязательно указывая режим и кодировку
+	with open(r'config', mode='r', encoding='utf-8') as fl:
+	# считываем содержимое файлам одним списком стром
+		onstring = fl.readlines()
+	
+	lens = {}
+	
+	for i in onstring:
+		k, v = i.split(',')
+		v = v.strip()
+		v = float(v)
+		# добавляем в словарь соответствующие пары ключ:значение
+		lens[k] =  v
+	return lens
+
 def camera_on():
 	
 	i = 0
@@ -48,21 +73,20 @@ class Application:
         author = Entry(self.root,width=20)
         author.place(x=320,y=30)
         
+        
+        lens = read_config_lense()
         Label(self.root, text="Обьектив").place(x=10,y=250)
         obj = Combobox(self.root,width=5)
-        obj['values'] = ("x5", "x10", "x20", "x40", "x60","x80", "x100")
+        obj['values'] = (list(lens.keys()))
         obj.current(0) # установите вариант по умолчанию
         obj.place(x=120,y=250)
-                
+        obj.bind('<Button-1>', lambda event: on_select(event, obj))    
                
         Label(self.root, text="Шлиф").place(x=10,y=225)
         thinsection = Entry(self.root,width=15)
         thinsection.place(x=120,y=225)
 
         Label(self.root, text="Участок").place(x=10,y=275)
-        #uch = Entry(root,width=5)
-        #uch.place(x=150,y=300)
-
         uch = Spinbox(self.root, from_=1, to=5, width=4)  
         uch.place(x=120,y=275)
         
@@ -79,6 +103,8 @@ class Application:
         btn = Button(self.root, text="Фото", height = 8, width = 10, command=lambda: param(collection, thinsection, obj, uch, chk_state))
         btn.place(x=10,y=350)
         
+        configBtn = Button(self.root, text="config", height = 8, width = 10, command=open_config)
+        configBtn.place(x=200,y=350)
         
         GO = Button(self.root, text="Выход", command=self.root.quit, height = 8, width = 10)
         GO.place(x=400,y=350) #

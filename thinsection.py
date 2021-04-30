@@ -20,10 +20,10 @@ def copy(path, new_path):
             -стандартной камеры Honor
 	''' 
 	# create main folder
-	subprocess.run(["mkdir", "-p", path])
-	subprocess.run(["mkdir", "-p", new_path])
+	os.makedirs(new_path, exist_ok=True)
 	subprocess.run(["adb", "pull", "/sdcard/DCIM/Camera/.", new_path])
-	subprocess.run(["rm","-rf", os.path.join(new_path, "cache") ])
+	del_cache_path = os.path.join(new_path, "cache")
+	os.rmdir(del_cache_path)
 	
 
 def del_photo_folder(pattern):

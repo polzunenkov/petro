@@ -6,7 +6,7 @@ import os
 from PIL import Image, ImageFont, ImageDraw
 import subprocess
 import time
-
+from gui import read_config_lense
 RESIZE_FACTOR=10
 
 
@@ -160,21 +160,6 @@ def convert_px_to_mm(img,diametr_pole):
 	end = (end_scale_h, end_scale_w)
 	return  w, h, start, end, value_scale_bar_mm
 	
-def read_config_lense():
-	# открываем файл, обязательно указывая режим и кодировку
-	with open(r'config', mode='r', encoding='utf-8') as fl:
-	# считываем содержимое файлам одним списком стром
-		onstring = fl.readlines()
-	
-	lens = {}
-	
-	for i in onstring:
-		k, v = i.split(',')
-		v = v.strip()
-		v = float(v)
-		# добавляем в словарь соответствующие пары ключ:значение
-		lens[k] =  v
-	return lens
 
 def add_scale_bar_nicoli(path_to_images,combine_image,lense_name):
 	""" добавляет подписи николей и масштабную линейку на фото
