@@ -12,7 +12,8 @@ RESIZE_FACTOR=10
 
 def load(path_to_images):
 	""" Загрузка двух фотографий шлифа """
-	images = glob.glob(os.path.join(path_to_images,"*.jpg"))
+	all_images_in_directory = os.path.join(path_to_images,"*.jpg")
+	images = glob.glob(all_images_in_directory)
 	img1 = cv2.imread(images[0],1)
 	img2 = cv2.imread(images[1],1)
 	return img1, img2
@@ -193,23 +194,22 @@ def show_img_montage(path_to_images):
 
 def montage(path_to_images, lense_name):
 	""" обьединяет фото с разными николями """
-	print("диаметр поле", lense_name)
 	(img1,img2) = load(path_to_images) #load photo thinsiction
 	rimg1 = resize_img(RESIZE_FACTOR,img1) #resize photo thinsiction
 	rimg2 = resize_img(RESIZE_FACTOR,img2)
-	x_r, y_r, r_r = find_circle_(rimg1)
+	(x_r, y_r, r_r) = find_circle_(rimg1)
 	try:
-		x_r, y_r, r_r = find_circle_(rimg1) #find in resise photo thinsection coordinates centre and radius circle
+		(x_r, y_r, r_r) = find_circle_(rimg1) #find in resise photo thinsection coordinates centre and radius circle
 	except TypeError:
 		try:
-			x_r, y_r, r_r = find_circle_(rimg2)
+			(x_r, y_r, r_r) = find_circle_(rimg2)
 		except TypeError:
 			print("Ошибка! Круг не найдет")
 			return
 
-	x, y, r = initial_coordinates_radius(x_r, y_r, r_r, RESIZE_FACTOR) #convert coordinates centre and radius circle to initial size photo
-	img1_mask, img2_mask  = mask_to_img(img1,img2,x, y, r) #put mask to thinsection photo
-	crop_img1, crop_img2 = crop(x,y,r,img1_mask, img2_mask) 
+	(x, y, r) = initial_coordinates_radius(x_r, y_r, r_r, RESIZE_FACTOR) #convert coordinates centre and radius circle to initial size photo
+	(img1_mask, img2_mask)  = mask_to_img(img1,img2,x, y, r) #put mask to thinsection photo
+	(crop_img1, crop_img2) = crop(x,y,r,img1_mask, img2_mask) 
 	combine_image = combine_img(crop_img1, crop_img2, path_to_images) #combine two photo (-,+) thinsection
 	add_scale_bar_nicoli(path_to_images, combine_image,lense_name)
 	time.sleep(5)

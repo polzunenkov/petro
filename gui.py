@@ -54,60 +54,72 @@ def param(collection, thinsection, obj, uch, chk_state):
 class Application:
     def __init__(self):
         self.root =  Tk()
-        img = Image.open("microscope.jpg")
-        w = 500
+        img = Image.open("backround.png")
+        w = 250
         ratio = (w / float(img.size[0]))
-        h = int((float(img.size[1]) * float(ratio)))
+        h = 540#int((float(img.size[1]) * float(ratio)))
         imag = img.resize((w,h), Image.ANTIALIAS)
         images = ImageTk.PhotoImage(imag)
         panel = Label( image=images)
         panel.pack(side="top", fill="both", expand="no")
-        self.root.title("PETRO PHOTO")
-
-        Label(self.root, text="Коллекция").place(x=200,y=10)
-        collection = Entry(self.root,width=20)
-        collection.place(x=320,y=10)
-        collection.focus()
-
+        self.root.title("NEISRI FEB RAS")
+        
         Label(self.root, text="Автор").place(x=250,y=30)
         author = Entry(self.root,width=20)
         author.place(x=320,y=30)
+        Label(self.root,font=("Times", "12", "bold"), text="Collection").place(x=80,y=205)
+        collection = Entry(self.root,font=("Times",12),justify="center",width=30)
+        collection.place(x=4,y=228)
+        collection.focus()
+
+        Label(self.root, font=("Times", "12", "bold"), text="Sample").place(x=100,y=251)
+        thinsection = Entry(self.root, font=("Times",12),justify="center", width=30)
+        thinsection.place(x=4,y=274)
         
         
         lens = read_config_lense()
-        Label(self.root, text="Обьектив").place(x=10,y=250)
-        obj = Combobox(self.root,width=5)
+        Label(self.root,  font=("Times", "12", "bold"), text="Lense").place(x=35,y=297)
+        obj = Combobox(self.root,font=("Times",12),justify="center", width=13)
         obj['values'] = (list(lens.keys()))
         obj.current(0) # установите вариант по умолчанию
-        obj.place(x=120,y=250)
+        obj.place(x=5,y=315)
         obj.bind('<Button-1>', lambda event: on_select(event, obj))    
                
-        Label(self.root, text="Шлиф").place(x=10,y=225)
-        thinsection = Entry(self.root,width=15)
-        thinsection.place(x=120,y=225)
-
-        Label(self.root, text="Участок").place(x=10,y=275)
-        uch = Spinbox(self.root, from_=1, to=5, width=4)  
-        uch.place(x=120,y=275)
         
-                
+
+        Label(self.root,  font=("Times", "12", "bold"),  text="Area").place(x=160,y=297)
+        uch = Spinbox(self.root, font=("Times",12),justify="center",from_=1, to=5, width=13)  
+        uch.place(x=127,y=315)
+        
+        
+        Label(self.root,font=("Times", "12", "bold"), text="Number of photos").place(x=70,y=340)
+        
         chk_state = IntVar()
         chk_state.set(0) # False
         chk_state.set(1) # True
-        chk = Checkbutton(self.root, text='Монтаж', var=chk_state)
-        chk.place(x=10, y=325)
+        chk = Checkbutton(self.root,font=("Times", "12", "bold"), text='Two', var=chk_state)
+        chk.place(x=160, y=360)
         
-        camera = Button(self.root, text="Камера", command=camera_on, height = 8, width = 10)
-        camera.place(x=10,y=100)
+        chk_state1 = IntVar()
+        chk_state1.set(1) # False
+        chk_state1.set(0) # True
+        chk = Checkbutton(self.root,font=("Times", "12", "bold"), text='One', var=chk_state1)
+        chk.place(x=45, y=360)
         
-        btn = Button(self.root, text="Фото", height = 8, width = 10, command=lambda: param(collection, thinsection, obj, uch, chk_state))
-        btn.place(x=10,y=350)
+        camera = Button(self.root, font=("Times",10,"bold"), text="Camera", command=camera_on, height = 5, width = 31)
+        camera.place(x=4,y=65)
         
-        configBtn = Button(self.root, text="config", height = 8, width = 10, command=open_config)
-        configBtn.place(x=200,y=350)
         
-        GO = Button(self.root, text="Выход", command=self.root.quit, height = 8, width = 10)
-        GO.place(x=400,y=350) #
+        configBtn = Button(self.root,  font=("Times",10), text="Config", height = 5, width = 31, command=open_config)
+        configBtn.place(x=4,y=135)
+        
+        
+        btn = Button(self.root, text="Make", height = 5, width = 31, command=lambda: param(collection, thinsection, obj, uch, chk_state))
+        btn.place(x=5,y=400)
+        
+               
+        GO = Button(self.root, text="Exit", command=self.root.quit, height = 5, width = 31)
+        GO.place(x=5,y=470) #
 
 
         self.root.mainloop()
