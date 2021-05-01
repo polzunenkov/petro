@@ -54,7 +54,7 @@ def param(collection, thinsection, obj, uch, chk_state):
 class Application:
     def __init__(self):
         self.root =  Tk()
-        img = Image.open("backround.png")
+        img = Image.open("microscope.jpg")
         w = 250
         ratio = (w / float(img.size[0]))
         h = 540#int((float(img.size[1]) * float(ratio)))
