@@ -29,11 +29,10 @@ def resize_img(resize_factor,img):
 	return rimg
 
 
-def combine_img(img1,img2,path_to_images):
+def combine_img(img1,img2,path_to_images,resize_f = 3):
 	""" Обьединяет две фотографии"""
-	resize_factor = 3
-	rimg1 = resize_img(resize_factor,img1)
-	rimg2 = resize_img(resize_factor,img2)
+	rimg1 = resize_img(resize_f,img1)
+	rimg2 = resize_img(resize_f,img2)
 	combine_image = np.concatenate((rimg1, rimg2), axis=1)
 	
 	return combine_image
@@ -225,13 +224,13 @@ def add_scale_bar(combine_image,lense_name):
 	img =  combine_image
 	lens = read_config_lense()
 	diametr_pole = lens.get(lense_name)
-	w, h, start, end, value_scale_bar_mm = convert_px_to_mm(img,diametr_pole, one_images = True, st_h = 0.4, ed_h = 0.6, st_w = 0, ed_w = 0.04)
+	w, h, start, end, value_scale_bar_mm = convert_px_to_mm(img,diametr_pole, one_images = True, st_h = 0.7, ed_h = 0.9, st_w = 0.04, ed_w = 0.07)
 	add_draw_to_image(img, start_point = start, end_point = end)
 	koef_size = 6/11680
 	size_text = h*koef_size
 	koef_thickness_text = 18/6
 	thickness_text = int(size_text*koef_thickness_text)
-	add_text_to_image(img, text = value_scale_bar_mm, size = size_text*1.5, thickness = thickness_text, x = int(h/2-h*0.04) ,y = int(0+w*0.035))
+	add_text_to_image(img, text = value_scale_bar_mm, size = size_text*1.5, thickness = thickness_text, x = int(h*0.75) ,y = int(w*0.06))
 	img = resize_img(3, img)
 	return  img
 
@@ -241,7 +240,7 @@ def show_img_montage(path_to_images):
 	cv2.waitKey()
 	cv2.destroyAllWindows() 
 
-def montage(path_to_images, lense_name):
+def load_resize_find_circle(path_to_images, lense_name):
 	""" обьединяет фото с разными николями """
 	(img1,img2) = load(path_to_images) #load photo thinsiction
 	
@@ -251,20 +250,30 @@ def montage(path_to_images, lense_name):
 	(x_r, y_r, r_r) = find_circle(rimg1)
 	(x, y, r) = initial_coordinates_radius(x_r, y_r, r_r, RESIZE_FACTOR) #convert coordinates centre and radius circle to initial size photo
 	
+	return img1, img2, rimg1, rimg2, x, y, r
+	
+def two_photo_circle(path_to_images, lense_name):
+	(img1, img2, rimg1, rimg2, x, y, r) = load_resize_find_circle(path_to_images, lense_name)
 	(img1_mask, img2_mask)  = mask_to_img(img1,img2,x, y, r) #put mask to thinsection photo
 	(crop_img1, crop_img2) = crop(x,y,r,img1_mask, img2_mask) 
-	combine_image = combine_img(crop_img1, crop_img2, path_to_images) #combine two photo (-,+) thinsection
+	combine_image = combine_img(crop_img1, crop_img2, path_to_images,resize_f = 3) #combine two photo (-,+) thinsection
 	image_bar = add_scale_bar_nicoli(combine_image,lense_name)
+	save_img(path_to_images, combine_image)
+	time.sleep(5)
+	show_img_montage(path_to_images)
 	
+	
+def two_photo_square(path_to_images, lense_name):
+	(img1, img2, rimg1, rimg2, x, y, r) = load_resize_find_circle(path_to_images, lense_name)
 	(crop_square_img1, crop_square_img2) =crop_square(x,y,r,img1,img2)
 	image_bar1 = add_scale_bar(crop_square_img1,lense_name)
-	
-	save_img(path_to_images, image_bar)
-	
+	image_bar2 = add_scale_bar(crop_square_img2,lense_name)
+	combine_image1 = combine_img(image_bar1, image_bar2, path_to_images,resize_f = 1) #combine two photo (-,+) thinsection
+	save_img(path_to_images, combine_image1)
 	time.sleep(5)
 	show_img_montage(path_to_images)
 
 
 if __name__== "__main__":
-	montage(path_to_images,diametr_pole)
+	two_photo_circle(path_to_images,diametr_pole)
 

@@ -6,7 +6,7 @@ import cv2
 import numpy as np
 import sys
 import glob
-from script import montage as montage_
+from script import two_photo_circle, two_photo_square
 
 
 def _create_new_path(old_path, thinsection_name, lense, uch_name):
@@ -48,13 +48,15 @@ def del_photo_folder(pattern):
               default="x5")
 @click.option('--uch_name', help='name of the uch used', 
               default="1")
-@click.option('--montage', help='combine photo after change black by white from mask circle', 
+@click.option('--two_circle', help='combine photo after change black by white from mask circle', 
+              is_flag=True, default=False)
+@click.option('--two_square', help='combine photo after change black by white from mask circle', 
               is_flag=True, default=False)
 @click.option('--do_not_remove_from_phone',
               help='remove phtos from phone folder ', 
               is_flag=True, default=False)
-def main(path, pattern, thinsection_name, lense_name, uch_name, montage, do_not_remove_from_phone):
-	'''
+def main(path, pattern, thinsection_name, lense_name, uch_name, two_circle, two_square, do_not_remove_from_phone):
+	''' 
 	Копирует файлы с камеры телефона на компьютер
 	'''
 	old_path = os.path.normpath(path)
@@ -62,9 +64,13 @@ def main(path, pattern, thinsection_name, lense_name, uch_name, montage, do_not_
 	click.echo(old_path)
 	click.echo(new_path)
 	copy(old_path,new_path)
-	print("дмаметр поле", lense_name)
-	if montage:
-		montage_(new_path, lense_name)
+	#print("дмаметр поле", lense_name)
+		
+	if two_circle:
+		two_photo_circle(new_path, lense_name)
+	
+	if two_square:
+		two_photo_square(new_path, lense_name)
 	
 	if not do_not_remove_from_phone:
 		del_photo_folder(pattern)

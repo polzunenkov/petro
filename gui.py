@@ -44,10 +44,12 @@ def camera_on():
 def photo_make():
 	subprocess.Popen('adb shell input keyevent 27',shell=True)
 
-def param(collection, thinsection, obj, uch, chk_state):
+def param(collection, thinsection, obj, uch, chk_state, chk_state1):
 	save_thinsection_photo = f"python3.7 thinsection.py --path={collection.get()} --thinsection_name={thinsection.get()} --lense_name={obj.get()} --uch_name={uch.get()} --pattern='*.jpg' "
 	if chk_state.get() == 1:
-		save_thinsection_photo += " --montage"
+		save_thinsection_photo += " --two_circle"
+	if chk_state1.get() == 1:
+		save_thinsection_photo += " --two_square"
 	print(save_thinsection_photo)
 	subprocess.Popen(str(save_thinsection_photo),shell=True)
 	
@@ -114,7 +116,7 @@ class Application:
         configBtn.place(x=4,y=135)
         
         
-        btn = Button(self.root, text="Make", height = 5, width = 31, command=lambda: param(collection, thinsection, obj, uch, chk_state))
+        btn = Button(self.root, text="Make", height = 5, width = 31, command=lambda: param(collection, thinsection, obj, uch, chk_state,chk_state1))
         btn.place(x=5,y=400)
         
                
