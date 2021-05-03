@@ -44,12 +44,16 @@ def camera_on():
 def photo_make():
 	subprocess.Popen('adb shell input keyevent 27',shell=True)
 
-def param(collection, thinsection, obj, uch, chk_state, chk_state1):
+def param(collection, thinsection, obj, uch, chk_state, chk_state1, chk_state2, chk_state3):
 	save_thinsection_photo = f"python3.7 thinsection.py --path={collection.get()} --thinsection_name={thinsection.get()} --lense_name={obj.get()} --uch_name={uch.get()} --pattern='*.jpg' "
 	if chk_state.get() == 1:
 		save_thinsection_photo += " --two_circle"
 	if chk_state1.get() == 1:
 		save_thinsection_photo += " --two_square"
+	if chk_state2.get() == 1:
+		save_thinsection_photo += " --one_circle"
+	if chk_state3.get() == 1:
+		save_thinsection_photo += " --one_square"
 	print(save_thinsection_photo)
 	subprocess.Popen(str(save_thinsection_photo),shell=True)
 	
@@ -94,19 +98,39 @@ class Application:
         uch.place(x=127,y=315)
         
         
-        Label(self.root,font=("Times", "12", "bold"), text="Number of photos").place(x=70,y=340)
+        Label(self.root,font=("Times", "12", "bold"), text="Type of mask").place(x=70,y=338)
+        Label(self.root,  font=("Times", "12", "bold"),  text="Two photo ").place(x=5,y=360)
         
         chk_state = IntVar()
         chk_state.set(0) # False
         chk_state.set(1) # True
-        chk = Checkbutton(self.root,font=("Times", "12", "bold"), text='Two', var=chk_state)
-        chk.place(x=160, y=360)
+        chk = Checkbutton(self.root,font=("Times", "12", "bold"), text='circle', var=chk_state)
+        chk.place(x=92, y=360)
         
         chk_state1 = IntVar()
         chk_state1.set(1) # False
         chk_state1.set(0) # True
-        chk = Checkbutton(self.root,font=("Times", "12", "bold"), text='One', var=chk_state1)
-        chk.place(x=45, y=360)
+        chk1 = Checkbutton(self.root,font=("Times", "12", "bold"), text='square', var=chk_state1)
+        chk1.place(x=170, y=360)
+        
+        Label(self.root,  font=("Times", "12", "bold"),  text="One photo ").place(x=5,y=380)
+        
+        chk_state2 = IntVar()
+        chk_state2.set(1) # False
+        chk_state2.set(0) # True
+        chk2 = Checkbutton(self.root,font=("Times", "12", "bold"), text='circle', var=chk_state2)
+        chk2.place(x=92, y=380)
+        
+        chk_state3 = IntVar()
+        chk_state3.set(1) # False
+        chk_state3.set(0) # True
+        chk3 = Checkbutton(self.root,font=("Times", "12", "bold"), text='square', var=chk_state3)
+        chk3.place(x=170, y=380)
+        
+        
+        
+        
+        
         
         camera = Button(self.root, font=("Times",10,"bold"), text="Camera", command=camera_on, height = 5, width = 31)
         camera.place(x=4,y=65)
@@ -116,7 +140,7 @@ class Application:
         configBtn.place(x=4,y=135)
         
         
-        btn = Button(self.root, text="Make", height = 5, width = 31, command=lambda: param(collection, thinsection, obj, uch, chk_state,chk_state1))
+        btn = Button(self.root, text="Make", height = 5, width = 31, command=lambda: param(collection, thinsection, obj, uch, chk_state,chk_state1,chk_state2,chk_state3))
         btn.place(x=5,y=400)
         
                
