@@ -199,7 +199,7 @@ def add_scale_bar_nicoli(combine_image,lense_name):
 	img =  combine_image
 	lens = read_config_lense()
 	diametr_pole = lens.get(lense_name)
-	w, h, start, end, value_scale_bar_mm = convert_px_to_mm(img,diametr_pole,one_images = False, st_h = 0.4, ed_h = 0.6, st_w = 0, ed_w = 0.04)
+	w, h, start, end, value_scale_bar_mm = convert_px_to_mm(img,diametr_pole,one_images = False, st_h = 0.435, ed_h = 0.56, st_w = 0, ed_w = 0.04)
 	add_draw_to_image(img, start_point = start, end_point = end) 
 	add_draw_to_image(img, start_point = (h, 0), end_point = (int(h-h*0.05), int(w*0.1))) 
 	add_draw_to_image(img, start_point = (0, 0), end_point = (int(h*0.05), int(w*0.1)))
@@ -224,7 +224,7 @@ def add_scale_bar(combine_image,lense_name):
 	img =  combine_image
 	lens = read_config_lense()
 	diametr_pole = lens.get(lense_name)
-	w, h, start, end, value_scale_bar_mm = convert_px_to_mm(img,diametr_pole, one_images = True, st_h = 0.78, ed_h = 0.98, st_w = 0.03, ed_w = 0.07)
+	w, h, start, end, value_scale_bar_mm = convert_px_to_mm(img,diametr_pole, one_images = True, st_h = 0.8025, ed_h = 0.98, st_w = 0.03, ed_w = 0.07)
 	print(start[0],int(h*0.75))
 	add_draw_to_image(img, start_point = start, end_point = end)
 	koef_size = 6/11680
