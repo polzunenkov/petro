@@ -14,9 +14,12 @@ def load(path_to_images):
 	""" Загрузка двух фотографий шлифа """
 	all_images_in_directory = os.path.join(path_to_images,"*.jpg")
 	images = sorted(glob.glob(all_images_in_directory))
-	img1 = cv2.imread(images[0],1)
-	img2 = cv2.imread(images[1],1)
-	print(images)
+	if len(images)==2:
+		img1 = cv2.imread(images[0],1)
+		img2 = cv2.imread(images[1],1)
+	else:
+		img1 = cv2.imread(images[0],1)
+		img2 = cv2.imread(images[0],1)
 	return img1, img2
  
 
