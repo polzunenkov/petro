@@ -166,8 +166,6 @@ def convert_px_to_mm(img,diametr_pole,one_images = True ,st_h = 0, ed_h = 1, st_
 		
 	print('D = ',storona_a)
 	pix_mm = storona_a / h
-	#parts_pix = h / D
-	#parts_mm = storona_a / D
 	
 	start_h = st_h * h
 	end_h = ed_h * h
@@ -178,21 +176,6 @@ def convert_px_to_mm(img,diametr_pole,one_images = True ,st_h = 0, ed_h = 1, st_
 	start = (int(start_h),int(start_w))
 	end = (int(end_h), int(end_w))
 	
-	
-	
-	#parts = 8
-	#h_mm = diametr_pole*k
-	
-	#h_parts = h/parts
-	#h_mm_parts = h_mm/parts
-	#start_scale_h = int(start_h * h_parts)
-	#end_scale_h = int(end_h * h_parts)
-	#start_scale_w = int(start_w)
-	#end_scale_w = int(end_w* h_parts)
-	#l_bar = round((h_mm/h*h_parts),2)
-	#value_scale_bar_mm = str(l_bar)
-	#start = (start_scale_h,start_scale_w)
-	#end = (end_scale_h, end_scale_w)
 	return  w, h, start, end, value_bar_mm
 	
 
@@ -228,13 +211,13 @@ def add_scale_bar(combine_image,lense_name):
 	lens = read_config_lense()
 	diametr_pole = lens.get(lense_name)
 	w, h, start, end, value_scale_bar_mm = convert_px_to_mm(img,diametr_pole, one_images = True, st_h = 0.8025, ed_h = 0.98, st_w = 0.03, ed_w = 0.07)
-	print(start[0],int(h*0.75))
-	add_draw_to_image(img, start_point = start, end_point = end)
+	add_draw_to_image(img, start_point = start, end_point = end, color = (255,255,255), thickness = -1)
+	add_draw_to_image(img, start_point = start, end_point = end,color = (0,0,0), thickness = 5)
 	koef_size = 6/11680
-	size_text = h*koef_size
+	size_text = h*koef_size*1.2
 	koef_thickness_text = 18/6
-	thickness_text = int(size_text*koef_thickness_text)
-	add_text_to_image(img, text = value_scale_bar_mm, size = size_text*1.5, thickness = thickness_text, x = int(h*0.83) ,y = int(w*0.06))
+	thickness_text = int(size_text*koef_thickness_text)*2
+	add_text_to_image(img, text = value_scale_bar_mm, size = size_text*1.5, color = (0,0,0), thickness = thickness_text, x = int(h*0.83) ,y = int(w*0.058))
 	img = resize_img(3, img)
 	return  img
 
