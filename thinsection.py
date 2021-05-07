@@ -1,7 +1,6 @@
 import subprocess
 import os	
 import click
-
 import cv2
 import numpy as np
 import sys
@@ -37,29 +36,29 @@ def del_photo_folder(pattern):
 
 
 
-@click.command()
-@click.option('--path', help='Path to destination folder', required=True)
-@click.option('--pattern', 
-              help='pattern to delete files from Camera folder', 
-              default="IMG_*.jpg")
-@click.option('--thinsection_name', help='name for the thin section', 
-              default="thin01")
-@click.option('--lense_name', help='name of the lesne used', 
-              default="x5")
-@click.option('--uch_name', help='name of the uch used', 
-              default="1")
-@click.option('--two_circle', help='combine photo after change black by white from mask circle', 
-              is_flag=True, default=False)
-@click.option('--two_square', help='combine photo after change black by white from mask circle', 
-              is_flag=True, default=False)
-@click.option('--one_circle', help='combine photo after change black by white from mask circle', 
-              is_flag=True, default=False)
-@click.option('--one_square', help='combine photo after change black by white from mask circle', 
-              is_flag=True, default=False)
-@click.option('--do_not_remove_from_phone',
-              help='remove phtos from phone folder ', 
-              is_flag=True, default=False)
-def main(path, pattern, thinsection_name, lense_name, uch_name, two_circle, two_square, one_circle, one_square, do_not_remove_from_phone):
+#@click.command()
+#@click.option('--path', help='Path to destination folder', required=True)
+#@click.option('--pattern', 
+#              help='pattern to delete files from Camera folder', 
+#              default="IMG_*.jpg")
+#@click.option('--thinsection_name', help='name for the thin section', 
+#              default="thin01")
+#@click.option('--lense_name', help='name of the lesne used', 
+#              default="x5")
+#@click.option('--uch_name', help='name of the uch used', 
+#              default="1")
+#@click.option('--two_circle', help='combine photo after change black by white from mask circle', 
+#              is_flag=True, default=False)
+#@click.option('--two_square', help='combine photo after change black by white from mask circle', 
+#              is_flag=True, default=False)
+#@click.option('--one_circle', help='combine photo after change black by white from mask circle', 
+#              is_flag=True, default=False)
+#@click.option('--one_square', help='combine photo after change black by white from mask circle', 
+#              is_flag=True, default=False)
+#@click.option('--do_not_remove_from_phone',
+#              help='remove phtos from phone folder ', 
+#              is_flag=True, default=False)
+def main_(path, pattern, thinsection_name, lense_name, uch_name, two_circle=False, two_square=False, one_circle=False, one_square=False, do_not_remove_from_phone=True):
 	''' 
 	Копирует файлы с камеры телефона на компьютер
 	'''
@@ -88,7 +87,7 @@ def main(path, pattern, thinsection_name, lense_name, uch_name, two_circle, two_
 		del_photo_folder(pattern)
 
 if __name__=="__main__":
-	main()
+	main_()
 
 
 

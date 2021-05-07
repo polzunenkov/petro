@@ -4,7 +4,8 @@ from PIL import ImageTk, Image
 import time
 import subprocess
 import tkinter.font as font
-
+from thinsection import *
+import script 
 def open_config():
 	subprocess.Popen('gedit config',shell=True)
 
@@ -39,20 +40,22 @@ def camera_on():
 	time.sleep(sleep_time)
 	subprocess.Popen('adb shell am start -a android.media.action.STILL_IMAGE_CAMERA',shell=True)
 	
-	
+
 
 def param(collection, thinsection, obj, uch, chk_state, chk_state1, chk_state2, chk_state3):
-	save_thinsection_photo = f"python3.7 thinsection.py --path={collection.get()} --thinsection_name={thinsection.get()} --lense_name={obj.get()} --uch_name={uch.get()} --pattern='*.jpg' "
+		
+	save_thinsection_photo = "main_(collection.get(), '*.jpg', thinsection.get(), obj.get(), uch.get(), do_not_remove_from_phone=True"
 	if chk_state.get() == 1:
-		save_thinsection_photo += " --two_circle"
+		save_thinsection_photo += " ,two_circle=True"
 	if chk_state1.get() == 1:
-		save_thinsection_photo += " --two_square"
+		save_thinsection_photo += " ,two_square=True"
 	if chk_state2.get() == 1:
-		save_thinsection_photo += " --one_circle"
+		save_thinsection_photo += " ,one_circle=True"
 	if chk_state3.get() == 1:
-		save_thinsection_photo += " --one_square"
-	print(save_thinsection_photo)
-	subprocess.Popen(str(save_thinsection_photo),shell=True)
+		save_thinsection_photo += " ,one_square=True"
+		
+	save_thinsection_photo += " )"
+	eval(save_thinsection_photo)
 	
 class Application:
     def __init__(self):
@@ -69,7 +72,7 @@ class Application:
         frame2right.pack(side=RIGHT, fill=BOTH, expand=1)
        
         
-        photo = PhotoImage(file = r"/tmp/backround.png")
+        photo = PhotoImage(file = r"backround.png")
         
         self.root.title("NEISRI FEB RAS")
         Times = font.Font(family='Times', size=12, weight='bold')
@@ -137,7 +140,7 @@ class Application:
         GO = Button(frame2, font=btn_font, width=13, text="Exit", command=self.root.quit)
         GO.pack(side=BOTTOM, fill=BOTH, padx=5, pady=5, expand=1) #
         
-        btn = Button(frame2, font=btn_font, text="Make", command=lambda: param(collection, thinsection, obj, uch, chk_state,chk_state1,chk_state2,chk_state3))
+        btn = Button(frame2, font=btn_font, text="Make", command=lambda: param(collection, thinsection, obj, uch, chk_state, chk_state1, chk_state2, chk_state3))
         btn.pack(side=BOTTOM, fill=BOTH, padx=5, pady=5, expand=1)
                        
         
@@ -146,9 +149,9 @@ class Application:
 		
         
 
-def main():
+def mains():
     app = Application()
     
 
 if __name__ == '__main__':
-    main()
+    mains()
