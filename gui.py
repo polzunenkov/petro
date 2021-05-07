@@ -57,79 +57,90 @@ def param(collection, thinsection, obj, uch, chk_state, chk_state1, chk_state2, 
 class Application:
     def __init__(self):
         self.root =  Tk()
-        #self.root.geometry("250x540")
-        img = Image.open("microscope.jpg")
-        w = 250; h = 540
-        ratio = (w / float(img.size[0]))
-        imag = img.resize((w,h), Image.ANTIALIAS)
-        images = ImageTk.PhotoImage( imag )
-        panel = Label( image=images )
-        panel.pack(side="top", fill="both", expand="no")
+        frame1 = Frame(self.root)
+        frame2 = Frame(self.root)
+        frame2left = Frame(frame2)
+        frame2right = Frame(frame2)
+        
+        
+        frame1.pack(side=TOP, fill=BOTH, expand=1)
+        frame2.pack(side=BOTTOM, fill=BOTH, expand=1)
+        frame2left.pack(side=LEFT, fill=BOTH, expand=1)
+        frame2right.pack(side=RIGHT, fill=BOTH, expand=1)
+       
+        
+        photo = PhotoImage(file = r"/tmp/backround.png")
+        
         self.root.title("NEISRI FEB RAS")
         Times = font.Font(family='Times', size=12, weight='bold')
-         
-        camera = Button(self.root, text="Camera", command=camera_on, height = 5, width = 31)
-        camera.place(x=4,y=65)
+        Times1 = font.Font(family='Times', size=12, weight='bold')
+        btn_font = font.Font(family='Times', size=24, weight='bold')
         
-        configBtn = Button(self.root,  text="Config", height = 5, width = 31, command=open_config)
-        configBtn.place(x=4,y=135)
+        about = Button(frame1,image=photo,font=btn_font, text="About")
+        about.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
         
-        Label(self.root,font=Times, text="Collection").place(x=80,y=205)
-        collection = Entry(self.root,font=Times,justify="center",width=30)
-        collection.place(x=4,y=228)
+        camera = Button(frame1,font=btn_font, text="Camera", command=camera_on)
+        camera.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
+        
+        configBtn = Button(frame1, font=btn_font, text="Config", command=open_config)
+        configBtn.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
+        
+        Label(frame1,font=Times, text="Collection").pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
+        collection = Entry(frame1,font=Times,justify="center")
+        collection.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
         collection.focus()
 
-        Label(self.root, font=Times, text="Sample").place(x=100,y=251)
-        thinsection = Entry(self.root, font=Times,justify="center", width=30)
-        thinsection.place(x=4,y=274)
+        Label(frame1, font=Times, text="Sample").pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
+        thinsection = Entry(frame1, font=Times,justify="center")
+        thinsection.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
         
         lens = read_config_lense()
-        Label(self.root,  font=Times, text="Lense").place(x=35,y=297)
-        obj = Combobox(self.root,font=Times,justify="center", width=13)
+        Label(frame1,  font=Times, text="Lense").pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
+        obj = Combobox(frame1,font=Times,justify="center")
         obj['values'] = (list(lens.keys()))
         obj.current(0) # установите вариант по умолчанию
-        obj.place(x=5,y=315)
+        obj.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
         obj.bind('<Button-1>', lambda event: on_select(event, obj))    
         
-        Label(self.root,  font=Times,  text="Area").place(x=160,y=297)
-        uch = Spinbox(self.root, font=Times,justify="center",from_=1, to=5, width=13)  
-        uch.place(x=127,y=315)
+        Label(frame1,  font=Times,  text="Area").pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
+        uch = Spinbox(frame1, font=Times,justify="center",from_=1, to=5)  
+        uch.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
         
-        Label(self.root,font=Times, text="Type of mask").place(x=70,y=338)
+        Label(frame1,font=Times, text="Type of mask").pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
         
-        Label(self.root,  font=Times,  text="Two photo ").place(x=5,y=360)
+               
+        chk_state2 = IntVar()
+        chk_state2.set(1) # False
+        chk_state2.set(0) # True
+        chk2 = Checkbutton(frame1,font=Times1, text='❍', var=chk_state2)
+        chk2.pack(side=RIGHT, fill=BOTH, padx=5, pady=5, expand=1)
         
         chk_state = IntVar()
         chk_state.set(0) # False
         chk_state.set(1) # True
-        chk = Checkbutton(self.root,font=Times, text='❍❍', var=chk_state)
-        chk.place(x=92, y=360)
-        
-        chk_state1 = IntVar()
-        chk_state1.set(1) # False
-        chk_state1.set(0) # True
-        chk1 = Checkbutton(self.root,font=Times, text='❐❐', var=chk_state1)
-        chk1.place(x=170, y=360)
-        
-        Label(self.root,  font=Times,  text="One photo ").place(x=5,y=380)
-        
-        chk_state2 = IntVar()
-        chk_state2.set(1) # False
-        chk_state2.set(0) # True
-        chk2 = Checkbutton(self.root,font=Times, text='❍', var=chk_state2)
-        chk2.place(x=92, y=380)
+        chk = Checkbutton(frame1,font=Times1, text='❍❍', var=chk_state)
+        chk.pack(side=LEFT, fill=BOTH, padx=5, pady=5, expand=1)
         
         chk_state3 = IntVar()
         chk_state3.set(1) # False
         chk_state3.set(0) # True
-        chk3 = Checkbutton(self.root,font=Times, text='❐', var=chk_state3)
-        chk3.place(x=170, y=380)
+        chk3 = Checkbutton(frame1,font=Times1, text='❐', var=chk_state3)
+        chk3.pack(side=RIGHT, fill=BOTH, padx=5, pady=5, expand=1)
         
-        btn = Button(self.root, text="Make", height = 5, width = 31, command=lambda: param(collection, thinsection, obj, uch, chk_state,chk_state1,chk_state2,chk_state3))
-        btn.place(x=5,y=400)
+        chk_state1 = IntVar()
+        chk_state1.set(1) # False
+        chk_state1.set(0) # True
+        chk1 = Checkbutton(frame1,font=Times1, text='❐❐', var=chk_state1)
+        chk1.pack(side=LEFT, padx=5, pady=5, expand=1)
+        
+                
+        GO = Button(frame2, font=btn_font, width=13, text="Exit", command=self.root.quit)
+        GO.pack(side=BOTTOM, fill=BOTH, padx=5, pady=5, expand=1) #
+        
+        btn = Button(frame2, font=btn_font, text="Make", command=lambda: param(collection, thinsection, obj, uch, chk_state,chk_state1,chk_state2,chk_state3))
+        btn.pack(side=BOTTOM, fill=BOTH, padx=5, pady=5, expand=1)
                        
-        GO = Button(self.root, text="Exit", command=self.root.quit, height = 5, width = 31)
-        GO.place(x=5,y=470) #
+        
 
         self.root.mainloop()
 		
