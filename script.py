@@ -6,8 +6,24 @@ import os
 from PIL import Image, ImageFont, ImageDraw
 import subprocess
 import time
-from gui import read_config_lense
+
 RESIZE_FACTOR=10
+
+def read_config_lense():
+	# открываем файл, обязательно указывая режим и кодировку
+	with open(r'config', mode='r', encoding='utf-8') as fl:
+	# считываем содержимое файлам одним списком стром
+		onstring = fl.readlines()
+	
+	lens = {}
+	
+	for i in onstring:
+		k, v = i.split(',')
+		v = v.strip()
+		v = float(v)
+		# добавляем в словарь соответствующие пары ключ:значение
+		lens[k] =  v
+	return lens
 
 
 def load(path_to_images):

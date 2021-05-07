@@ -4,8 +4,11 @@ from PIL import ImageTk, Image
 import time
 import subprocess
 import tkinter.font as font
-from thinsection import *
-import script 
+
+from thinsection import ready
+from script import read_config_lense
+
+
 def open_config():
 	subprocess.Popen('gedit config',shell=True)
 
@@ -14,21 +17,7 @@ def on_select(event, obj):
 	print("on_select")
 	obj['values'] = (list(lens.keys()))
 
-def read_config_lense():
-	# открываем файл, обязательно указывая режим и кодировку
-	with open(r'config', mode='r', encoding='utf-8') as fl:
-	# считываем содержимое файлам одним списком стром
-		onstring = fl.readlines()
-	
-	lens = {}
-	
-	for i in onstring:
-		k, v = i.split(',')
-		v = v.strip()
-		v = float(v)
-		# добавляем в словарь соответствующие пары ключ:значение
-		lens[k] =  v
-	return lens
+
 
 def camera_on():
 	
@@ -44,18 +33,16 @@ def camera_on():
 
 def param(collection, thinsection, obj, uch, chk_state, chk_state1, chk_state2, chk_state3):
 		
-	save_thinsection_photo = "main_(collection.get(), '*.jpg', thinsection.get(), obj.get(), uch.get(), do_not_remove_from_phone=True"
 	if chk_state.get() == 1:
-		save_thinsection_photo += " ,two_circle=True"
+		ready(path=collection.get(), pattern='*.jpg', thinsection_name=thinsection.get(), lense_name=obj.get(), uch_name=uch.get(), two_circle=True, two_square=False, one_circle=False, one_square=False, do_not_remove_from_phone=False)
 	if chk_state1.get() == 1:
-		save_thinsection_photo += " ,two_square=True"
+		ready(path=collection.get(), pattern='*.jpg', thinsection_name=thinsection.get(), lense_name=obj.get(), uch_name=uch.get(), two_circle=True, two_square=False, one_circle=False, one_square=False, do_not_remove_from_phone=False)
 	if chk_state2.get() == 1:
-		save_thinsection_photo += " ,one_circle=True"
+		ready(path=collection.get(), pattern='*.jpg', thinsection_name=thinsection.get(), lense_name=obj.get(), uch_name=uch.get(), two_circle=True, two_square=False, one_circle=False, one_square=False, do_not_remove_from_phone=False)
 	if chk_state3.get() == 1:
-		save_thinsection_photo += " ,one_square=True"
+		ready(path=collection.get(), pattern='*.jpg', thinsection_name=thinsection.get(), lense_name=obj.get(), uch_name=uch.get(), two_circle=True, two_square=False, one_circle=False, one_square=False, do_not_remove_from_phone=False)
+
 		
-	save_thinsection_photo += " )"
-	eval(save_thinsection_photo)
 	
 class Application:
     def __init__(self):
