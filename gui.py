@@ -72,7 +72,7 @@ class Application:
         frame2right.pack(side=RIGHT, fill=BOTH, expand=1)
        
         
-        photo = PhotoImage(file = r"backround.png")
+        photo = PhotoImage(file = r"microscope.png")
         
         self.root.title("NEISRI FEB RAS")
         Times = font.Font(family='Times', size=12, weight='bold')
