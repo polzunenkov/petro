@@ -1,6 +1,5 @@
 from tkinter import *
 from tkinter.ttk import Combobox
-from PIL import ImageTk, Image
 import time
 import subprocess
 import tkinter.font as font
@@ -29,18 +28,23 @@ def camera_on():
 	time.sleep(sleep_time)
 	subprocess.Popen('adb shell am start -a android.media.action.STILL_IMAGE_CAMERA',shell=True)
 	
-
+two_circle_=False
+two_square_=False
+one_circle_=False
+one_square_=False
 
 def param(collection, thinsection, obj, uch, chk_state, chk_state1, chk_state2, chk_state3):
 	print(collection, thinsection, obj, uch, chk_state, chk_state1, chk_state2, chk_state3)
 	if chk_state.get() == 1:
-		ready(path=collection.get(), pattern='*.jpg', thinsection_name=thinsection.get(), lense_name=obj.get(), uch_name=uch.get(), two_circle=True)
+		two_circle_=True
 	if chk_state1.get() == 1:
-		ready(path=collection.get(), pattern='*.jpg', thinsection_name=thinsection.get(), lense_name=obj.get(), uch_name=uch.get(), two_square=True)
+		two_square_=True
 	if chk_state2.get() == 1:
-		ready(path=collection.get(), pattern='*.jpg', thinsection_name=thinsection.get(), lense_name=obj.get(), uch_name=uch.get(), one_circle=True)
+		one_circle_=True
 	if chk_state3.get() == 1:
-		ready(path=collection.get(), pattern='*.jpg', thinsection_name=thinsection.get(), lense_name=obj.get(), uch_name=uch.get(), one_square=True)
+		one_square_=True
+	
+	ready(path=collection.get(), pattern='*.jpg', thinsection_name=thinsection.get(), lense_name=obj.get(), uch_name=uch.get(), two_circle=two_circle_, two_square=two_square_, one_circle=one_circle_, one_square=one_square_, do_not_remove_from_phone=True)
 
 		
 	
