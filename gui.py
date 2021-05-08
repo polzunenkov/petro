@@ -32,15 +32,15 @@ def camera_on():
 
 
 def param(collection, thinsection, obj, uch, chk_state, chk_state1, chk_state2, chk_state3):
-		
+	print(collection, thinsection, obj, uch, chk_state, chk_state1, chk_state2, chk_state3)
 	if chk_state.get() == 1:
-		ready(path=collection.get(), pattern='*.jpg', thinsection_name=thinsection.get(), lense_name=obj.get(), uch_name=uch.get(), two_circle=True, two_square=False, one_circle=False, one_square=False, do_not_remove_from_phone=False)
+		ready(path=collection.get(), pattern='*.jpg', thinsection_name=thinsection.get(), lense_name=obj.get(), uch_name=uch.get(), two_circle=True)
 	if chk_state1.get() == 1:
-		ready(path=collection.get(), pattern='*.jpg', thinsection_name=thinsection.get(), lense_name=obj.get(), uch_name=uch.get(), two_circle=True, two_square=False, one_circle=False, one_square=False, do_not_remove_from_phone=False)
+		ready(path=collection.get(), pattern='*.jpg', thinsection_name=thinsection.get(), lense_name=obj.get(), uch_name=uch.get(), two_square=True)
 	if chk_state2.get() == 1:
-		ready(path=collection.get(), pattern='*.jpg', thinsection_name=thinsection.get(), lense_name=obj.get(), uch_name=uch.get(), two_circle=True, two_square=False, one_circle=False, one_square=False, do_not_remove_from_phone=False)
+		ready(path=collection.get(), pattern='*.jpg', thinsection_name=thinsection.get(), lense_name=obj.get(), uch_name=uch.get(), one_circle=True)
 	if chk_state3.get() == 1:
-		ready(path=collection.get(), pattern='*.jpg', thinsection_name=thinsection.get(), lense_name=obj.get(), uch_name=uch.get(), two_circle=True, two_square=False, one_circle=False, one_square=False, do_not_remove_from_phone=False)
+		ready(path=collection.get(), pattern='*.jpg', thinsection_name=thinsection.get(), lense_name=obj.get(), uch_name=uch.get(), one_square=True)
 
 		
 	
