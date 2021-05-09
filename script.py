@@ -3,27 +3,73 @@ import numpy as np
 import sys
 import glob
 import os
-from PIL import Image, ImageFont, ImageDraw
+import configparser
 import subprocess
 import time
 
 RESIZE_FACTOR=10
 
-def read_config_lense():
-	# открываем файл, обязательно указывая режим и кодировку
-	with open(r'config', mode='r', encoding='utf-8') as fl:
-	# считываем содержимое файлам одним списком стром
-		onstring = fl.readlines()
-	
-	lens = {}
-	
-	for i in onstring:
-		k, v = i.split(',')
-		v = v.strip()
-		v = float(v)
-		# добавляем в словарь соответствующие пары ключ:значение
-		lens[k] =  v
-	return lens
+def create_config(path,name_lens1,name_lens2,name_lens3,name_lens4,name_lens5,d_lens1,d_lens2,d_lens3,d_lens4,d_lens5):
+    """
+    Create a config file
+    """
+    config = configparser.ConfigParser()
+    config.add_section("Lense")
+    config.set("Lense", name_lens1.get(), d_lens1.get())
+    config.set("Lense", name_lens2.get(), d_lens2.get())
+    config.set("Lense", name_lens3.get(), d_lens3.get())
+    config.set("Lense", name_lens4.get(), d_lens4.get())
+    config.set("Lense", name_lens5.get(), d_lens5.get())
+        
+    with open(path, "w") as config_file:
+        config.write(config_file)
+ 
+ 
+def get_config(path,name_lens1,name_lens2,name_lens3,name_lens4,name_lens5,d_lens1,d_lens2,d_lens3,d_lens4,d_lens5):
+    """
+    Returns the config object
+    """
+    #if not os.path.exists(path):
+    create_config(path,name_lens1,name_lens2,name_lens3,name_lens4,name_lens5,d_lens1,d_lens2,d_lens3,d_lens4,d_lens5)
+    
+    config = configparser.ConfigParser()
+    config.read(path)
+    return config
+ 
+ 
+def get_setting(path, section, setting):
+    """
+    Print out a setting
+    """
+    config = get_config(path)
+    value = config.get(section, setting)
+    msg = "{section} {setting} is {value}".format(
+        section=section, setting=setting, value=value
+    )
+    
+    print(msg)
+    return value
+ 
+ 
+def update_setting(path, section, setting, value):
+    """
+    Update a setting
+    """
+    config = get_config(path)
+    config.set(section, setting, value)
+    with open(path, "w") as config_file:
+        config.write(config_file)
+ 
+ 
+def delete_setting(path, section, setting):
+    """
+    Delete a setting
+    """
+    config = get_config(path)
+    config.remove_option(section, setting)
+    with open(path, "w") as config_file:
+        config.write(config_file)
+
 
 
 def load(path_to_images):

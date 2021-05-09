@@ -3,18 +3,86 @@ from tkinter.ttk import Combobox
 import time
 import subprocess
 import tkinter.font as font
-
+import os
+import configparser
 from thinsection import ready
-from script import read_config_lense
+from script import get_config, get_setting, update_setting, get_config
+
+path = "settings.ini"
+   
+#lense_get = get_setting(path, 'Lense', lense_dict[1])
 
 
+def settings():
+	settings = Tk()
+	settings.title("Settings lense")
+	path="settings.ini"
+	Times = font.Font(family='Times', size=12, weight='bold')
+	
+	LAB1 = Label(settings, font=Times, text="Lense 1").pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
+	name_lens1 = Entry(settings, font=Times,justify="center")
+	name_lens1.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
+	name_lens1.insert(0,"x5")
+	LAB1_ = Label(settings, font=Times, text="Diametr pole").pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
+	d_lens1 = Entry(settings, font=Times,justify="center")
+	d_lens1.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
+	d_lens1.insert(0,"4")
+	
+	LAB2 = Label(settings, font=Times, text="Lense 2").pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
+	name_lens2 = Entry(settings, font=Times,justify="center")
+	name_lens2.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
+	name_lens2.insert(0,"x10")
+	LAB2_ = Label(settings, font=Times, text="Diametr pole").pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
+	d_lens2 = Entry(settings, font=Times,justify="center")
+	d_lens2.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
+	d_lens2.insert(0,"2")
+	
+	LAB3 = Label(settings, font=Times, text="Lense 3").pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
+	name_lens3 = Entry(settings, font=Times,justify="center")
+	name_lens3.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
+	name_lens3.insert(0,"x20")
+	LAB3_ = Label(settings, font=Times, text="Diametr pole").pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
+	d_lens3 = Entry(settings, font=Times,justify="center")
+	d_lens3.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
+	d_lens3.insert(0,"1")
+	
+	LAB4 = Label(settings, font=Times, text="Lense 4").pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
+	name_lens4 = Entry(settings, font=Times,justify="center")
+	name_lens4.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
+	name_lens4.insert(0,"x40")
+	LAB4_ = Label(settings, font=Times, text="Diametr pole").pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
+	d_lens4 = Entry(settings, font=Times,justify="center")
+	d_lens4.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
+	d_lens4.insert(0,"0.5")
+	
+	LAB5 = Label(settings, font=Times, text="Lense 5").pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
+	name_lens5 = Entry(settings, font=Times,justify="center")
+	name_lens5.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
+	name_lens5.insert(0,"x60")
+	LAB5_ = Label(settings, font=Times, text="Diametr pole").pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
+	d_lens5 = Entry(settings, font=Times,justify="center")
+	d_lens5.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
+	d_lens5.insert(0,"0.25")
+		
+	Button(settings, font=Times, text="Make", command=lambda:get_config(path,name_lens1,name_lens2,name_lens3,name_lens4,name_lens5,d_lens1,d_lens2,d_lens3,d_lens4,d_lens5)).pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
+	#Button(settings, font=Times, text="Exit", command=settings.quit).pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
+	
+		
+		    
 def open_config():
 	subprocess.Popen('gedit config',shell=True)
 
+
+def lens_():
+	config = configparser.ConfigParser()
+	config.read("settings.ini")
+	lens = list(config["Lense"])
+	return lens
+	
+		
 def on_select(event, obj):
-	lens = read_config_lense()
-	print("on_select")
-	obj['values'] = (list(lens.keys()))
+	lens = lens_()
+	obj['values'] = lens
 
 
 
@@ -51,6 +119,7 @@ def param(collection, thinsection, obj, uch, chk_state, chk_state1, chk_state2, 
 class Application:
     def __init__(self):
         self.root =  Tk()
+        
         frame1 = Frame(self.root)
         frame2 = Frame(self.root)
         frame2left = Frame(frame2)
@@ -66,11 +135,14 @@ class Application:
         photo = PhotoImage(file = r"microscope.png")
         
         self.root.title("NEISRI FEB RAS")
+        
+        
+        
         Times = font.Font(family='Times', size=12, weight='bold')
         Times1 = font.Font(family='Times', size=12, weight='bold')
         btn_font = font.Font(family='Times', size=24, weight='bold')
         
-        about = Button(frame1,image=photo,font=btn_font, text="About")
+        about = Button(frame1,image=photo,font=btn_font, text="About",command=settings)
         about.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
         
         camera = Button(frame1,font=btn_font, text="Camera", command=camera_on)
@@ -88,10 +160,9 @@ class Application:
         thinsection = Entry(frame1, font=Times,justify="center")
         thinsection.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
         
-        lens = read_config_lense()
         Label(frame1,  font=Times, text="Lense").pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
         obj = Combobox(frame1,font=Times,justify="center")
-        obj['values'] = (list(lens.keys()))
+        obj['values'] = lens_()
         obj.current(0) # установите вариант по умолчанию
         obj.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
         obj.bind('<Button-1>', lambda event: on_select(event, obj))    
