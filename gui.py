@@ -9,71 +9,98 @@ from thinsection import ready
 from script import create_config_, get_setting, update_setting, get_config, lens_
 
 path = "settings.ini"
-   
-#lense_get = get_setting(path, 'Lense', lense_dict[1])
 
+def about_as():
+	about = Tk()
+	about.title("About PETRO")
+	Times = font.Font(family='Helvetica', size=12)
+	Label(about, font=Times, text="https://github.com/polzunenkov/petro/archive/refs/heads/dev.zip").pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
+	
 
 def settings():
+	""" Окно настройки для обьективов"""
+	
 	settings = Tk()
 	settings.title("Settings lense")
 	path="settings.ini"
-	Times = font.Font(family='Times', size=12, weight='bold')
+	Times = font.Font(family='Times', size=12)
 	
-	LAB1 = Label(settings, font=Times, text="Lense 1").pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
+	#Формируем подписи полей обьективов
+	
+	LAB1 = Label(settings, font=Times, text="Lense 1")
+	LAB2 = Label(settings, font=Times, text="Lense 2")
+	LAB3 = Label(settings, font=Times, text="Lense 3")
+	LAB4 = Label(settings, font=Times, text="Lense 4")
+	LAB5 = Label(settings, font=Times, text="Lense 5")
+	
+	#Формируем подписи полей для ввода диаметра поля зрения
+	
+	LAB1_ = Label(settings, font=Times, text="Diametr pole")
+	LAB2_ = Label(settings, font=Times, text="Diametr pole")
+	LAB3_ = Label(settings, font=Times, text="Diametr pole")
+	LAB4_ = Label(settings, font=Times, text="Diametr pole")
+	LAB5_ = Label(settings, font=Times, text="Diametr pole")
+	
+	#Формируем поля ввода названия обьективов
+	
 	name_lens1 = Entry(settings, font=Times,justify="center")
-	name_lens1.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
-	name_lens1.insert(0,"x5")
-	LAB1_ = Label(settings, font=Times, text="Diametr pole").pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
-	d_lens1 = Entry(settings, font=Times,justify="center")
-	d_lens1.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
-	d_lens1.insert(0,"4")
-	
-	LAB2 = Label(settings, font=Times, text="Lense 2").pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
 	name_lens2 = Entry(settings, font=Times,justify="center")
-	name_lens2.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
-	name_lens2.insert(0,"x10")
-	LAB2_ = Label(settings, font=Times, text="Diametr pole").pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
-	d_lens2 = Entry(settings, font=Times,justify="center")
-	d_lens2.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
-	d_lens2.insert(0,"2")
-	
-	LAB3 = Label(settings, font=Times, text="Lense 3").pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
 	name_lens3 = Entry(settings, font=Times,justify="center")
-	name_lens3.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
-	name_lens3.insert(0,"x20")
-	LAB3_ = Label(settings, font=Times, text="Diametr pole").pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
-	d_lens3 = Entry(settings, font=Times,justify="center")
-	d_lens3.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
-	d_lens3.insert(0,"1")
-	
-	LAB4 = Label(settings, font=Times, text="Lense 4").pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
 	name_lens4 = Entry(settings, font=Times,justify="center")
-	name_lens4.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
-	name_lens4.insert(0,"x40")
-	LAB4_ = Label(settings, font=Times, text="Diametr pole").pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
-	d_lens4 = Entry(settings, font=Times,justify="center")
-	d_lens4.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
-	d_lens4.insert(0,"0.5")
-	
-	LAB5 = Label(settings, font=Times, text="Lense 5").pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
 	name_lens5 = Entry(settings, font=Times,justify="center")
-	name_lens5.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
-	name_lens5.insert(0,"x60")
-	LAB5_ = Label(settings, font=Times, text="Diametrgit  pole").pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
-	d_lens5 = Entry(settings, font=Times,justify="center")
-	d_lens5.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
-	d_lens5.insert(0,"0.25")
-		
-	Button(settings, font=Times, text="Make", command=lambda:get_config(path,name_lens1,name_lens2,name_lens3,name_lens4,name_lens5,d_lens1,d_lens2,d_lens3,d_lens4,d_lens5)).pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
-	#Button(settings, font=Times, text="Exit", command=settings.quit).pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
 	
+	#Формируем поля ввода диаметра поля зрения
+	
+	d_lens1 = Entry(settings, font=Times,justify="center")
+	d_lens2 = Entry(settings, font=Times,justify="center")
+	d_lens3 = Entry(settings, font=Times,justify="center")
+	d_lens4 = Entry(settings, font=Times,justify="center")
+	d_lens5 = Entry(settings, font=Times,justify="center")
+	
+	#Формируем порядок размежения в окне
+		
+	LAB1.pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
+	name_lens1.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
+	LAB1_.pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
+	d_lens1.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
+	LAB2.pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
+	name_lens2.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
+	LAB2_.pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
+	d_lens2.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
+	LAB3.pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
+	name_lens3.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
+	LAB3_.pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
+	d_lens3.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
+	LAB4.pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
+	name_lens4.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
+	LAB4_.pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
+	d_lens4.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
+	LAB5.pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
+	name_lens5.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
+	LAB5_.pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
+	d_lens5.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
+	
+	#Формируем данные по умолчанию
+	
+	name_lens1.insert(0,"x5")
+	d_lens1.insert(0,"4")
+	name_lens2.insert(0,"x10")
+	d_lens2.insert(0,"2")
+	name_lens3.insert(0,"x20")
+	d_lens3.insert(0,"1")
+	name_lens4.insert(0,"x40")
+	d_lens4.insert(0,"0.5")
+	name_lens5.insert(0,"x60")
+	d_lens5.insert(0,"0.25")
+	
+	#кнопки в окне
+	
+	Button(settings, font=Times, text="Make", command=lambda:get_config(path,name_lens1,name_lens2,name_lens3,name_lens4,name_lens5,d_lens1,d_lens2,d_lens3,d_lens4,d_lens5)).pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
+	
+	Button(settings, font=Times, text="Exit", command=settings.destroy).pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
+	settings.mainloop()
 		
 		    
-def open_config():
-	subprocess.Popen('gedit config',shell=True)
-
-
-	
 		
 def on_select(event, obj):
 	lens = lens_()
@@ -136,17 +163,17 @@ class Application:
         
         
         
-        Times = font.Font(family='Times', size=12, weight='bold')
-        Times1 = font.Font(family='Times', size=12, weight='bold')
-        btn_font = font.Font(family='Times', size=24, weight='bold')
+        Times = font.Font(family='Helvetica', size=12, weight='bold')
+        Times1 = font.Font(family='Helvetica', size=12, weight='bold')
+        btn_font = font.Font(family='Helvetica', size=24, weight='bold')
         
-        about = Button(frame1,image=photo,font=btn_font, text="About",command=settings)
+        about = Button(frame1,image=photo,font=btn_font, text="About",command=about_as)
         about.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
         
         camera = Button(frame1,font=btn_font, text="Camera", command=camera_on)
         camera.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
         
-        configBtn = Button(frame1, font=btn_font, text="Config", command=open_config)
+        configBtn = Button(frame1, font=btn_font, text="Config", command=settings)
         configBtn.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
         
         Label(frame1,font=Times, text="Collection").pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
