@@ -6,7 +6,7 @@ import tkinter.font as font
 import os
 import configparser
 from thinsection import ready
-from script import get_config, get_setting, update_setting, get_config
+from script import create_config_, get_setting, update_setting, get_config, lens_
 
 path = "settings.ini"
    
@@ -59,7 +59,7 @@ def settings():
 	name_lens5 = Entry(settings, font=Times,justify="center")
 	name_lens5.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
 	name_lens5.insert(0,"x60")
-	LAB5_ = Label(settings, font=Times, text="Diametr pole").pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
+	LAB5_ = Label(settings, font=Times, text="Diametrgit  pole").pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
 	d_lens5 = Entry(settings, font=Times,justify="center")
 	d_lens5.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
 	d_lens5.insert(0,"0.25")
@@ -73,11 +73,6 @@ def open_config():
 	subprocess.Popen('gedit config',shell=True)
 
 
-def lens_():
-	config = configparser.ConfigParser()
-	config.read("settings.ini")
-	lens = list(config["Lense"])
-	return lens
 	
 		
 def on_select(event, obj):
@@ -96,13 +91,16 @@ def camera_on():
 	time.sleep(sleep_time)
 	subprocess.Popen('adb shell am start -a android.media.action.STILL_IMAGE_CAMERA',shell=True)
 	
-two_circle_=False
-two_square_=False
-one_circle_=False
-one_square_=False
+
 
 def param(collection, thinsection, obj, uch, chk_state, chk_state1, chk_state2, chk_state3):
 	print(collection, thinsection, obj, uch, chk_state, chk_state1, chk_state2, chk_state3)
+	
+	two_circle_=False
+	two_square_=False
+	one_circle_=False
+	one_square_=False
+	
 	if chk_state.get() == 1:
 		two_circle_=True
 	if chk_state1.get() == 1:

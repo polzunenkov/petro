@@ -9,6 +9,23 @@ import time
 
 RESIZE_FACTOR=10
 
+def create_config_(path):
+    """
+    Create a config file
+    """
+    config = configparser.ConfigParser()
+    config.add_section("Lense")
+    config.set("Lense", "x5",  "4")
+    config.set("Lense", "x10", "2")
+    config.set("Lense", "x20", "1")
+    config.set("Lense", "x40", "0.5")
+    config.set("Lense", "x60", "0.25")
+        
+    with open(path, "w") as config_file:
+        config.write(config_file)
+
+
+
 def create_config(path,name_lens1,name_lens2,name_lens3,name_lens4,name_lens5,d_lens1,d_lens2,d_lens3,d_lens4,d_lens5):
     """
     Create a config file
@@ -37,11 +54,13 @@ def get_config(path,name_lens1,name_lens2,name_lens3,name_lens4,name_lens5,d_len
     return config
  
  
+ 
 def get_setting(path, section, setting):
     """
     Print out a setting
     """
-    config = get_config(path)
+    config = configparser.ConfigParser()
+    config.read(path)
     value = config.get(section, setting)
     msg = "{section} {setting} is {value}".format(
         section=section, setting=setting, value=value
@@ -70,7 +89,15 @@ def delete_setting(path, section, setting):
     with open(path, "w") as config_file:
         config.write(config_file)
 
-
+def lens_():
+	path="settings.ini"
+	if not os.path.exists(path):
+		create_config_(path)
+	
+	config = configparser.ConfigParser()
+	config.read(path)
+	lens = list(config["Lense"])
+	return lens
 
 def load(path_to_images):
 	''' Загрузка двух фотографий шлифа '''
@@ -220,10 +247,10 @@ def convert_px_to_mm(img,diametr_pole,one_images = True ,st_h = 0, ed_h = 1, st_
 	print('d = ',diametr_pole)
 	
 	if one_images:
-		D = diametr_pole
+		D = float(diametr_pole)
 		storona_a = (D/2)*(2**0.5)
 	else:
-		D = diametr_pole*2
+		D = float(diametr_pole)*2
 		storona_a = D
 		
 	print('D = ',storona_a)
@@ -245,8 +272,9 @@ def add_scale_bar_nicoli(combine_image,lense_name):
 	''' добавляет подписи николей и масштабную линейку на фото
 		сохраняет фото в .jpg (уменьшеном) формате'''
 	img =  combine_image
-	lens = read_config_lense()
-	diametr_pole = lens.get(lense_name)
+	lens = lens_()
+	diametr_pole = float(get_setting("settings.ini", 'Lense', lense_name))
+	print(diametr_pole)
 	w, h, start, end, value_scale_bar_mm = convert_px_to_mm(img,diametr_pole,one_images = False, st_h = 0.435, ed_h = 0.56, st_w = 0, ed_w = 0.04)
 	add_draw_to_image(img, start_point = start, end_point = end) 
 	add_draw_to_image(img, start_point = (h, 0), end_point = (int(h-h*0.05), int(w*0.1))) 
@@ -270,8 +298,8 @@ def add_scale_bar(combine_image,lense_name):
 	''' добавляет подписи николей и масштабную линейку на фото
 		сохраняет фото в .jpg (уменьшеном) формате'''
 	img =  combine_image
-	lens = read_config_lense()
-	diametr_pole = lens.get(lense_name)
+	lens = lens_()
+	diametr_pole = float(get_setting("settings.ini", 'Lense', lense_name))
 	w, h, start, end, value_scale_bar_mm = convert_px_to_mm(img,diametr_pole, one_images = True, st_h = 0.8025, ed_h = 0.98, st_w = 0.03, ed_w = 0.07)
 	add_draw_to_image(img, start_point = start, end_point = end, color = (255,255,255), thickness = -1)
 	add_draw_to_image(img, start_point = start, end_point = end,color = (0,0,0), thickness = 5)
