@@ -258,7 +258,7 @@ class Application:
         chk1.pack(side=LEFT, padx=5, pady=5, expand=1)
 
         GO = Button(
-            frame2, font=btn_font, width=13, text="Exit", command=self.root.quit
+            frame2, font=btn_font, width=13, text="Exit", command=self.root.destroy
         )
         GO.pack(side=BOTTOM, fill=BOTH, padx=5, pady=5, expand=1)  #
 

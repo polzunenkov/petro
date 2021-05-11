@@ -21,7 +21,7 @@ def _create_new_path(old_path, thinsection_name, lense, uch_name):
 
 
 def copy(numbers, new_path):
-    """ копирует фотографии с телефона из дирректории Camera 
+    """ копирует последние две, одну фотографии с телефона из дирректории Camera 
             -стандартной камеры Honor
 	"""
 	

@@ -6,7 +6,7 @@ import os
 import configparser
 import subprocess
 import time
-
+import matplotlib.pyplot as plt
 RESIZE_FACTOR = 10
 
 
@@ -396,7 +396,7 @@ def show_img_montage(path_to_images, name):
     """показывает изображение"""
     image = cv2.imread(os.path.join(path_to_images, name))
     cv2.imshow(str(name), image)
-    cv2.waitKey()
+    cv2.waitKey(0)
     cv2.destroyAllWindows()
 
 
