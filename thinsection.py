@@ -20,16 +20,18 @@ def _create_new_path(old_path, thinsection_name, lense, uch_name):
     return path_new
 
 
-def copy(path, new_path):
+def copy(numbers, new_path):
     """ копирует фотографии с телефона из дирректории Camera 
             -стандартной камеры Honor
 	"""
-    # create main folder
+	
     os.makedirs(new_path, exist_ok=True)
-    subprocess.run(["adb", "pull", "/sdcard/DCIM/Camera/.", new_path])
-    del_cache_path = os.path.join(new_path, "cache")
-    os.rmdir(del_cache_path)
-
+    command = "adb shell ls -lt /sdcard/DCIM/Camera/*.jpg | head -n2 | tail -n"+ str(numbers)+" | awk '{print $8}'"
+    pipe = os.popen(command)
+    img = pipe.read().split('\n')[:-1]
+    for i in img:
+    	subprocess.run(["adb", "pull", i, new_path])	
+	
 
 def del_photo_folder(pattern):
     """ удаляет фотографии с телефона из дирректории Camera 
@@ -56,7 +58,7 @@ def del_photo_folder(pattern):
 )
 @click.option(
     "--two_square",
-    help="combine photo after change black by white from mask circle",
+    help="combine photo after change black by white from mask square",
     is_flag=True,
     default=False,
 )
@@ -68,7 +70,7 @@ def del_photo_folder(pattern):
 )
 @click.option(
     "--one_square",
-    help="combine photo after change black by white from mask circle",
+    help="combine photo after change black by white from mask square",
     is_flag=True,
     default=False,
 )
@@ -97,21 +99,25 @@ def ready(path, pattern, thinsection_name, lense_name, uch_name, two_circle=Fals
     """ 
     Копирует файлы с камеры телефона на компьютер
     """
+    print(two_circle,two_square,one_circle,one_square)
     old_path = os.path.normpath(path)
     new_path = _create_new_path(old_path, thinsection_name, lense_name, uch_name)
     click.echo(old_path)
     click.echo(new_path)
-    copy(old_path, new_path)
-
+    
     if two_circle:
-        two_photo_circle(new_path, lense_name)
-    elif two_square:
-        two_photo_square(new_path, lense_name)
+	    copy(2, new_path)
+	    two_photo_circle(new_path, lense_name)
+    if two_square:
+	    copy(2, new_path)
+	    two_photo_square(new_path, lense_name)
 
-    elif one_circle:
-        one_photo_circle(new_path, lense_name)
-    elif one_square:
-        one_photo_square(new_path, lense_name)
+    if one_circle:
+	    copy(1, new_path)
+	    one_photo_circle(new_path, lense_name)
+    if one_square:
+	    copy(1, new_path)
+	    one_photo_square(new_path, lense_name)
 
     if not do_not_remove_from_phone:
         del_photo_folder(pattern)
