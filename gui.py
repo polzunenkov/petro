@@ -130,12 +130,21 @@ def on_select(event, obj):
 
 
 def camera_on():
+
+    pipe = os.popen("adb shell getprop ro.build.version.release ")
+    version_OS = int(pipe.read())
+    print("version Android=", version_OS)
     # The interval between operations depends on the phone configuration. The higher the configuration, the shorter the time.
     sleep_time = 0.5
-    # Use popen to set shell=True will not pop up cmd box
-    subprocess.Popen("scrcpy", shell=True)
+    print(version_OS==9)
+    if version_OS==9:
+        # Use popen to set shell=True will not pop up cmd box
+        subprocess.Popen("scrcpy ", shell=True)
+    else:
+        subprocess.Popen("scrcpy -m 1520 ", shell=True)
+        
     time.sleep(sleep_time)
-    subprocess.Popen("adb shell am start -a android.media.action.STILL_IMAGE_CAMERA", shell=True)
+    subprocess.Popen("adb shell am start -a android.media.action.STILL_IMAGE_CAMERA", shell=True) 
 
 
 def param(collection, thinsection, obj, uch, chk_state, chk_state1, chk_state2, chk_state3):
