@@ -309,29 +309,54 @@ def convert_px_to_mm(
     return w, h, start, end, value_bar_mm
 
 
-def add_scale_bar_nicoli(combine_image, lense_name):
+def add_scale_bar_nicoli(combine_image, lense_name, one_images_=False):
     """ добавляет подписи николей и масштабную линейку на фото
 		сохраняет фото в .jpg (уменьшеном) формате"""
     img = combine_image
     lens = lens_()
     diametr_pole = float(get_setting("settings.ini", "Lense", lense_name))
     print(diametr_pole)
+    
+    if one_images_:
+        delta_h = 0.1
+        delta_w = 0.1
+        ed_w_ = 0.02
+        k_size = 6.5
+        k_w_ = 2
+    else:
+        delta_h = 0.05
+        delta_w = 0.1
+        ed_w_ = 0.04
+        k_size = 5.2
+        k_w_ = 1
+        
     w, h, start, end, value_scale_bar_mm = convert_px_to_mm(
-        img, diametr_pole, one_images=False, st_h=0.435, ed_h=0.56, st_w=0, ed_w=0.04
+        img, diametr_pole, one_images=one_images_, st_h=0.435, ed_h=0.56, st_w=0, ed_w=ed_w_
     )
-    add_draw_to_image(img, start_point=start, end_point=end)
+    add_draw_to_image(img,
+        start_point=start, 
+        end_point=end
+    )
     add_draw_to_image(
-        img, start_point=(h, 0), end_point=(int(h - h * 0.05), int(w * 0.1))
+        img, 
+        start_point=(h, 0), 
+        end_point=(int(h - h * delta_h), int(w * delta_w))
     )
-    add_draw_to_image(img, start_point=(0, 0), end_point=(int(h * 0.05), int(w * 0.1)))
-    koef_size = 6 / 11680
+    add_draw_to_image(
+        img,
+        start_point=(0, 0),
+        end_point=(int(h * delta_h), int(w * delta_w))
+    )
+    
+    koef_size = k_size / 11680
     size_text = h * koef_size
-    koef_thickness_text = 18 / 6
+    koef_thickness_text = 18 / k_size
     thickness_text = int(size_text * koef_thickness_text)
+    
     add_text_to_image(
         img,
         text=" (||) ",
-        size=size_text,
+        size=size_text*(k_size/4),
         thickness=thickness_text,
         x=int(h * 0.0005),
         y=int(w * 0.05),
@@ -339,7 +364,7 @@ def add_scale_bar_nicoli(combine_image, lense_name):
     add_text_to_image(
         img,
         text=" (+) ",
-        size=size_text,
+        size=size_text*(k_size/4),
         thickness=thickness_text,
         x=int(h - h * 0.05),
         y=int(w * 0.05),
@@ -350,7 +375,7 @@ def add_scale_bar_nicoli(combine_image, lense_name):
         size=size_text,
         thickness=thickness_text,
         x=int(h / 2 - h * 0.04),
-        y=int(0 + w * 0.035),
+        y=int(0 + w * (ed_w_-0.008/k_w_)),
     )
     return img
 
@@ -468,6 +493,23 @@ def one_photo_circle(path_to_images, lense_name):
     time.sleep(1)
     show_img_montage(path_to_images, "one_photo_circle.jpeg")
 
+
+def one_photo_huf_circle(path_to_images, lense_name):
+    """формирует изображение в виде  круга 
+	с маштабной линейкой с левой верхней стороны"""
+    (img1, img2, rimg1, rimg2, x, y, r) = load_resize_find_circle(path_to_images, lense_name)
+    (img1_mask, img2_mask) = mask_to_img(img1, img2, x, y, r)  # put mask to thinsection photo
+    (crop_img1, crop_img2) = crop(x, y, r, img1_mask, img2_mask)
+    h, w = crop_img1.shape[:2]
+    
+    crop_img1_huf = crop_img1[0:h,0:int(w/2)]
+    crop_img2_huf = crop_img2[0:h,int(w/2):w]
+    combine_image = combine_img(crop_img1_huf, crop_img2_huf, path_to_images, resize_f=3)
+    image_bar = add_scale_bar_nicoli(combine_image, lense_name,one_images_=True)
+    save_img(path_to_images, image_bar, "one_photo_huf_circle.jpeg")
+    time.sleep(1)
+    show_img_montage(path_to_images, "one_photo_huf_circle.jpeg")
+    
 
 def one_photo_square(path_to_images, lense_name):
     """формирует изображение в виде  квадрата 

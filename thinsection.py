@@ -10,6 +10,7 @@ from script import (
     two_photo_square,
     one_photo_circle,
     one_photo_square,
+    one_photo_huf_circle
 )
 
 
@@ -110,6 +111,7 @@ def ready(path, pattern, thinsection_name, lense_name, uch_name, two_circle=Fals
     if two_circle:
 	    copy(2, new_path)
 	    two_photo_circle(new_path, lense_name)
+	    one_photo_huf_circle(new_path, lense_name)
     if two_square:
 	    copy(2, new_path)
 	    two_photo_square(new_path, lense_name)
