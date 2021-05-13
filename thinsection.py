@@ -26,12 +26,14 @@ def copy(numbers, new_path):
 	"""
 	
     os.makedirs(new_path, exist_ok=True)
-    command = "adb shell ls -lt /sdcard/DCIM/Camera/*.jpg | head -n2 | tail -n"+ str(numbers)+" | awk '{print $8}'"
+    command = "adb shell ls -lt /sdcard/DCIM/Camera/*.jpg"
     pipe = os.popen(command)
-    img = pipe.read().split('\n')[:-1]
-    for i in img:
+    img = pipe.read().split('\n')
+    images1 = img[0].split(' ')[::-1][0]
+    images2 = img[1].split(' ')[::-1][0]
+    names=[images1,images2]
+    for i in names[0:numbers]:
     	subprocess.run(["adb", "pull", i, new_path])	
-	
 
 def del_photo_folder(pattern):
     """ удаляет фотографии с телефона из дирректории Camera 
