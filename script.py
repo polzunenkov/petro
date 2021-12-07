@@ -7,7 +7,9 @@ import configparser
 import subprocess
 import time
 import matplotlib.pyplot as plt
+from tkinter import filedialog as fd
 RESIZE_FACTOR = 10
+from settings import folder_img
 
 
 def create_config_(path):
@@ -136,37 +138,7 @@ def lens_():
     return lens
 
 
-def load(path_to_images):
-    """ Загрузка двух фотографий шлифа """
-    all_images_in_directory = os.path.join(path_to_images, "*.jpg")
-    images = sorted(glob.glob(all_images_in_directory))
-    if len(images) == 2:
-        img1 = cv2.imread(images[0], 1)
-        img2 = cv2.imread(images[1], 1)
-    else:
-        img1 = cv2.imread(images[0], 1)
-        img2 = cv2.imread(images[0], 1)
-    return img1, img2
-
-
-def resize_img(resize_factor, img):
-    """  Изменение размера фотографии  """
-    h, w = img.shape[:2]
-    h = int(h / resize_factor)
-    w = int(w / resize_factor)
-    rimg = cv2.resize(img, (w, h))
-    return rimg
-
-
-def combine_img(img1, img2, path_to_images, resize_f=3):
-    """ Обьединяет две фотографии"""
-    rimg1 = resize_img(resize_f, img1)
-    rimg2 = resize_img(resize_f, img2)
-    combine_image = np.concatenate((rimg1, rimg2), axis=1)
-
-    return combine_image
-
-
+    
 def find_circle(img):
     """ Поиск круга на фотографии, возвращает координаты центра и радиус первого найденного круга """
     hh, ww = img.shape[:2]
@@ -302,7 +274,7 @@ def convert_px_to_mm(
     start_w = st_w * w
     end_w = ed_w * w
     bar_pix = end_h - start_h
-    value_bar_mm = str(round(pix_mm * bar_pix, 2)) + " mm"
+    value_bar_mm = str(round(pix_mm * bar_pix, 1)) + " mm"
     start = (int(start_h), int(start_w))
     end = (int(end_h), int(end_w))
 
@@ -385,36 +357,38 @@ def save_img(path_to_images, image, name):
     cv2.imwrite(path_montage_jpg, image)
 
 
-def add_scale_bar(combine_image, lense_name):
-    """ добавляет подписи николей и масштабную линейку на фото
-		сохраняет фото в .jpg (уменьшеном) формате"""
-    img = combine_image
-    lens = lens_()
-    diametr_pole = float(get_setting("settings.ini", "Lense", lense_name))
-    w, h, start, end, value_scale_bar_mm = convert_px_to_mm(
-        img, diametr_pole, one_images=True, st_h=0.8025, ed_h=0.98, st_w=0.03, ed_w=0.07
-    )
-    add_draw_to_image(
-        img, start_point=start, end_point=end, color=(255, 255, 255), thickness=-1
-    )
-    add_draw_to_image(
-        img, start_point=start, end_point=end, color=(0, 0, 0), thickness=5
-    )
-    koef_size = 6 / 11680
-    size_text = h * koef_size * 1.2
-    koef_thickness_text = 18 / 6
-    thickness_text = int(size_text * koef_thickness_text) * 2
-    add_text_to_image(
-        img,
-        text=value_scale_bar_mm,
-        size=size_text * 1.5,
-        color=(0, 0, 0),
-        thickness=thickness_text,
-        x=int(h * 0.83),
-        y=int(w * 0.058),
-    )
-    img = resize_img(3, img)
-    return img
+def load(path_to_images):
+    """ Загрузка двух фотографий шлифа """
+    if folder_img:
+        type_img="*.jpeg"
+        print("выбор файлов на компьютере")
+        
+        
+        
+        for i in range(2):
+            if i==0:
+                foto1 = fd.askopenfilename()
+                os.system('cp '+ foto1 + ' '+path_to_images +'/fig1.jpeg')
+            else:
+                foto2 = fd.askopenfilename()
+                os.system('cp '+ foto2 +' '+path_to_images +'/fig2.jpeg')
+               
+                all_images_in_directory = os.path.join(path_to_images, type_img)
+                images = sorted(glob.glob(all_images_in_directory))
+         #os.path.dirname("/media/gardogen/995G/home/gardogen/PROGRAM/petro/vll/4504/x5/1/two_photo_square.jpeg")
+         #images =[foto1,foto2]
+    else:
+        type_img="*.jpg"
+        all_images_in_directory = os.path.join(path_to_images, type_img)
+        images = sorted(glob.glob(all_images_in_directory))
+    
+    if len(images) == 2:
+        img1 = cv2.imread(images[0], 1)
+        img2 = cv2.imread(images[1], 1)
+    else:
+        img1 = cv2.imread(images[0], 1)
+        img2 = cv2.imread(images[0], 1)
+    return img1, img2
 
 
 def show_img_montage(path_to_images, name):
@@ -425,102 +399,238 @@ def show_img_montage(path_to_images, name):
     cv2.destroyAllWindows()
 
 
-def load_resize_find_circle(path_to_images, lense_name):
+class LoadImg:
     """ возвращает исходные изображения img1, img2 ,
 	перемасштабированные изображения rimg1, rimg2,
 	координаты и радиус круглой маски """
-    (img1, img2) = load(path_to_images)  # load photo thinsiction
-
-    rimg1 = resize_img(RESIZE_FACTOR, img1)  # resize photo thinsiction
-    rimg2 = resize_img(RESIZE_FACTOR, img2)
-
-    (x_r, y_r, r_r) = find_circle(rimg1)
-    (x, y, r) = initial_coordinates_radius(
-        x_r, y_r, r_r, RESIZE_FACTOR
-    )  # convert coordinates centre and radius circle to initial size photo
-
-    return img1, img2, rimg1, rimg2, x, y, r
-
-
-def two_photo_circle(path_to_images, lense_name):
-    """формирует изображение в виде  двух кругов
-	 с маштабной линейкой и квардратами по углам
-	  со значками скрещенных и паралелбных николей """
-    (img1, img2, rimg1, rimg2, x, y, r) = load_resize_find_circle(
-        path_to_images, lense_name
-    )
-    (img1_mask, img2_mask) = mask_to_img(
-        img1, img2, x, y, r
-    )  # put mask to thinsection photo
-    (crop_img1, crop_img2) = crop(x, y, r, img1_mask, img2_mask)
-    combine_image = combine_img(
-        crop_img1, crop_img2, path_to_images, resize_f=3
-    )  # combine two photo (-,+) thinsection
-    image_bar = add_scale_bar_nicoli(combine_image, lense_name)
-    save_img(path_to_images, combine_image, "two_photo_circle.jpeg")
-    time.sleep(1)
-    show_img_montage(path_to_images, "two_photo_circle.jpeg")
-
-
-def two_photo_square(path_to_images, lense_name):
-    """формирует изображение в виде  двух квадратов
-	с маштабными линейками с левой верхней стороны каждого квадрата"""
-    (img1, img2, rimg1, rimg2, x, y, r) = load_resize_find_circle(
-        path_to_images, lense_name
-    )
-    (crop_square_img1, crop_square_img2) = crop_square(x, y, r, img1, img2)
-    image_bar1 = add_scale_bar(crop_square_img1, lense_name)
-    image_bar2 = add_scale_bar(crop_square_img2, lense_name)
-    h, w = image_bar1.shape[:2]
-    idm = image_bar1.copy()[0:h, 0 : int(w * 0.05)]
-    zeros = np.zeros((h, int(w * 0.05)), np.uint8)
-    idm[zeros == 0] = [255, 255, 255]
-    combine_image1 = np.concatenate((image_bar1, idm, image_bar2), axis=1)
-    # combine_image1 = combine_img(image_bar1, image_bar2, path_to_images,resize_f = 1) #combine two photo (-,+) thinsection
-    save_img(path_to_images, combine_image1, "two_photo_square.jpeg")
-    time.sleep(1)
-    show_img_montage(path_to_images, "two_photo_square.jpeg")
-
-
-def one_photo_circle(path_to_images, lense_name):
-    """формирует изображение в виде  круга 
-	с маштабной линейкой с левой верхней стороны"""
-    (img1, _, rimg1, _, x, y, r) = load_resize_find_circle(path_to_images, lense_name)
-    (img1_mask, _) = mask_to_img(img1, img1, x, y, r)  # put mask to thinsection photo
-    (crop_img1, _) = crop(x, y, r, img1_mask, img1_mask)
-    image_bar = add_scale_bar(crop_img1, lense_name)
-    save_img(path_to_images, image_bar, "one_photo_circle.jpeg")
-    time.sleep(1)
-    show_img_montage(path_to_images, "one_photo_circle.jpeg")
-
-
-def one_photo_huf_circle(path_to_images, lense_name):
-    """формирует изображение в виде  круга 
-	с маштабной линейкой с левой верхней стороны"""
-    (img1, img2, rimg1, rimg2, x, y, r) = load_resize_find_circle(path_to_images, lense_name)
-    (img1_mask, img2_mask) = mask_to_img(img1, img2, x, y, r)  # put mask to thinsection photo
-    (crop_img1, crop_img2) = crop(x, y, r, img1_mask, img2_mask)
-    h, w = crop_img1.shape[:2]
+ 
+    def __init__(self, path_to_images, lense_name):
+        """Constructor"""
+        self.path_to_images=path_to_images
+        (self.img1,self.img2) = load(self.path_to_images)
+        self.rimg1 = self.calculate_resize_img(RESIZE_FACTOR,self.img1)
+        self.rimg2 = self.calculate_resize_img(RESIZE_FACTOR,self.img2)
+        (self.x_r, self.y_r, self.r_r) = find_circle(self.rimg1)
+        (self.x, self.y, self.r) = initial_coordinates_radius(
+        self.x_r, self.y_r, self.r_r, RESIZE_FACTOR)
+        self.lense_name=lense_name
+               
+        
     
-    crop_img1_huf = crop_img1[0:h,0:int(w/2)]
-    crop_img2_huf = crop_img2[0:h,int(w/2):w]
-    combine_image = combine_img(crop_img1_huf, crop_img2_huf, path_to_images, resize_f=3)
-    image_bar = add_scale_bar_nicoli(combine_image, lense_name,one_images_=True)
-    save_img(path_to_images, image_bar, "one_photo_huf_circle.jpeg")
-    time.sleep(1)
-    show_img_montage(path_to_images, "one_photo_huf_circle.jpeg")
-    
+    def combine_img(self, crop_img1, crop_img2, resize_f=3):
+        """ Обьединяет две фотографии"""
+        rimg1 = self.calculate_resize_img(resize_f, crop_img1)
+        rimg2 = self.calculate_resize_img(resize_f, crop_img2)
+        combine_image = np.concatenate((rimg1, rimg2), axis=1)
 
-def one_photo_square(path_to_images, lense_name):
-    """формирует изображение в виде  квадрата 
-	с маштабной линейкой с левой верхней стороны"""
-    (img1, _, rimg1, _, x, y, r) = load_resize_find_circle(path_to_images, lense_name)
-    (crop_square_img1, _) = crop_square(x, y, r, img1, img1)
-    image_bar1 = add_scale_bar(crop_square_img1, lense_name)
-    save_img(path_to_images, image_bar1, "one_photo_square.jpeg")
-    time.sleep(1)
-    show_img_montage(path_to_images, "one_photo_square.jpeg")
+        return combine_image
+    
+    def calculate_resize_img(self, resize_factor, img):
+        """  Изменение размера фотографии  """
+        h, w = img.shape[:2]
+        h = int(h / resize_factor)
+        w = int(w / resize_factor)
+        return cv2.resize(img, (w, h))
+    
+    def add_scale_bar(self, combine_image, lense_name):
+        """ добавляет подписи николей и масштабную линейку на фото
+		    сохраняет фото в .jpg (уменьшеном) формате"""
+        img = combine_image
+        lens = lens_()
+        diametr_pole = float(get_setting("settings.ini", "Lense", lense_name))
+        w, h, start, end, value_scale_bar_mm = convert_px_to_mm(
+            img, diametr_pole, one_images=True, st_h=0.8025, ed_h=0.98, st_w=0.93, ed_w=0.94,
+        )
+        add_draw_to_image(
+            img, start_point=start, end_point=end, color=(0, 0, 0), thickness=-1
+        )
+        add_draw_to_image(
+            img, start_point=start, end_point=end, color=(0, 0, 0), thickness=5
+        )
+        koef_size = 6 / 11680
+        size_text = h * koef_size * 1.2
+        koef_thickness_text = 18 / 6
+        thickness_text = int(size_text * koef_thickness_text) * 2
+        add_text_to_image(
+            img,
+            text=value_scale_bar_mm,
+            size=size_text * 1.5,
+            color=(0, 0, 0),
+            thickness=thickness_text,
+            x=int(h * 0.83),
+            y=int(w * 0.98),
+        )
+        add_text_to_image(
+            img,
+            text="Sample",
+            size=size_text * 3.5,
+            color=(0, 0, 0),
+            thickness=thickness_text,
+            x=int(h * 0.35),
+            y=int(w * 0.97),
+        )
+        img = self.calculate_resize_img(3, img)
+        
+        return img
+    
+    def add_rectangle_trans(self, combine_image, lense_name):
+    
+        img = combine_image
+        overlay = img.copy()
+        lens = lens_()
+        diametr_pole = float(get_setting("settings.ini", "Lense", lense_name))
+        w, h, start, end, value_scale_bar_mm = convert_px_to_mm(
+            img, diametr_pole, one_images=True, st_h=0.0, ed_h=1.0, st_w=0.9, ed_w=1.0,
+        )
+        add_draw_to_image(
+            overlay, start_point=start, end_point=end, color=(255, 255, 255), thickness=-1
+        )
+        #add_draw_to_image(
+        #   overlay, start_point=start, end_point=end, color=(0, 0, 0), thickness=5
+        #)
+        
+        
+        #x, y, w, h = 10, 10, 10, 10  # Rectangle parameters
+        #cv2.rectangle(overlay, (start, end), (start+w, end+h), (0, 200, 0), -1)  # A filled rectangle
+    
+        alpha = 0.7  # Transparency factor.
+
+        # Following line overlays transparent rectangle over the image
+        image_new = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
+        return image_new
+       
+
+                        
+    def add_scale_bar_(self, combine_image, lense_name):
+        """ добавляет подписи николей и масштабную линейку на фото
+		    сохраняет фото в .jpg (уменьшеном) формате"""
+        img = combine_image
+        lens = lens_()
+        diametr_pole = float(get_setting("settings.ini", "Lense", lense_name))
+        w, h, start, end, value_scale_bar_mm = convert_px_to_mm(
+            img, diametr_pole, one_images=True, st_h=0.8025, ed_h=0.98, st_w=0.93, ed_w=0.97,
+        )
+        add_draw_to_image(
+            img, start_point=start, end_point=end, color=(255, 255, 255), thickness=-1
+        )
+        add_draw_to_image(
+            img, start_point=start, end_point=end, color=(0, 0, 0), thickness=5
+        )
+        koef_size = 6 / 11680
+        size_text = h * koef_size * 1.2
+        koef_thickness_text = 18 / 6
+        thickness_text = int(size_text * koef_thickness_text) * 2
+        add_text_to_image(
+            img,
+            text=value_scale_bar_mm,
+            size=size_text * 1.5,
+            color=(0, 0, 0),
+            thickness=thickness_text,
+            x=int(h * 0.83),
+            y=int(w * 0.958),
+        )
+        img = self.calculate_resize_img(3, img)
+        return img
+    
+    def two_photo_circle(self):
+        """формирует изображение в виде  двух кругов
+	     с маштабной линейкой и квардратами по углам
+	      со значками скрещенных и паралелбных николей """
+        
+        (img1_mask, img2_mask) = mask_to_img(
+            self.img1, self.img2, self.x, self.y, self.r
+        )  # put mask to thinsection photo
+        (crop_img1, crop_img2) = crop(self.x, self.y, self.r, img1_mask, img2_mask)
+        combine_image = self.combine_img(
+            crop_img1, crop_img2, resize_f=3
+        )  # combine two photo (-,+) thinsection
+        image_bar = add_scale_bar_nicoli(combine_image, self.lense_name)
+        #print("save img to : "+path_to_images)
+        save_img(self.path_to_images, combine_image, "two_photo_circle.jpeg")
+        time.sleep(1)
+        show_img_montage(self.path_to_images, "two_photo_circle.jpeg")
+        
+
+    def two_photo_square(self):
+        """формирует изображение в виде  двух квадратов
+	    с маштабными линейками с левой верхней стороны каждого квадрата"""
+        
+        (crop_square_img1, crop_square_img2) = crop_square(self.x, self.y, self.r, self.img1, self.img2)
+        image_bar1 = self.add_rectangle_trans(crop_square_img1, self.lense_name)
+        image_bar2 = self.add_rectangle_trans(crop_square_img2, self.lense_name)
+        image_bar1_ = self.add_scale_bar(image_bar1, self.lense_name)
+        image_bar2_ = self.add_scale_bar(image_bar2, self.lense_name)
+        h, w = image_bar1_.shape[:2]
+        idm = image_bar1_.copy()[0:h, 0 : int(w * 0.05)]
+        zeros = np.zeros((h, int(w * 0.05)), np.uint8)
+        idm[zeros == 0] = [255, 255, 255]
+        combine_image1 = np.concatenate((image_bar1_, idm, image_bar2_), axis=1)
+        # combine_image1 = combine_img(image_bar1, image_bar2, path_to_images,resize_f = 1) #combine two photo (-,+) thinsection
+        save_img(self.path_to_images, combine_image1, "two_photo_square.jpeg")
+        time.sleep(1)
+        show_img_montage(self.path_to_images, "two_photo_square.jpeg")
+
+
+    def one_photo_circle(self):
+        """формирует изображение в виде  круга 
+	    с маштабной линейкой с левой верхней стороны"""
+        
+        (img1_mask, _) = mask_to_img(self.img1, self.img1, self.x, self.y, self.r)  # put mask to thinsection photo
+        (crop_img1, _) = crop(self.x, self.y, self.r, img1_mask, img1_mask)
+        image_bar = self.add_scale_bar(crop_img1, self.lense_name)
+        save_img(self.path_to_images, image_bar, "one_photo_circle.jpeg")
+        time.sleep(1)
+        show_img_montage(self.path_to_images, "one_photo_circle.jpeg")
+
+
+    def one_photo_huf_circle(self):
+        """формирует изображение в виде  круга 
+	    с маштабной линейкой с левой верхней стороны"""
+        
+        (img1_mask, img2_mask) = mask_to_img(self.img1, self.img2, self.x, self.y, self.r)  # put mask to thinsection photo
+        (crop_img1, crop_img2) = crop(self.x, self.y, self.r, img1_mask, img2_mask)
+        h, w = crop_img1.shape[:2]
+        
+        crop_img1_huf = crop_img1[0:h,0:int(w/2)]
+        crop_img2_huf = crop_img2[0:h,int(w/2):w]
+        combine_image = self.combine_img(crop_img1_huf, crop_img2_huf, resize_f=3)
+        image_bar = add_scale_bar_nicoli(combine_image, self.lense_name, one_images_=True)
+        save_img(self.path_to_images, image_bar, "one_photo_huf_circle.jpeg")
+        time.sleep(1)
+        show_img_montage(self.path_to_images, "one_photo_huf_circle.jpeg")
+        
+
+    def one_photo_square(self):
+        """формирует изображение в виде  квадрата 
+	    с маштабной линейкой с левой верхней стороны"""
+       
+        (crop_square_img1, _) = crop_square(self.x, self.y, self.r, self.img1, self.img1)
+        image_bar1 = self.add_scale_bar(crop_square_img1, self.lense_name)
+        save_img(self.path_to_images, image_bar1, "one_photo_square.jpeg")
+        time.sleep(1)
+        show_img_montage(self.path_to_images, "one_photo_square.jpeg")
+        
+   
+
+
+#def load_resize_find_circle(path_to_images, lense_name):
+#    """ возвращает исходные изображения img1, img2 ,#
+#	перемасштабированные изображения rimg1, rimg2,
+#	координаты и радиус круглой маски """
+#    #(img1, img2) = load(path_to_images)  # load photo thinsiction#
+#
+#    #rimg1 = resize_img(RESIZE_FACTOR, img1)  # resize photo thinsiction
+#    #rimg2 = resize_img(RESIZE_FACTOR, img2)
+#
+#    (x_r, y_r, r_r) = find_circle(rimg1)
+#    (x, y, r) = initial_coordinates_radius(
+#        x_r, y_r, r_r, RESIZE_FACTOR
+#    )  # convert coordinates centre and radius circle to initial size photo#
+#
+ #   return img1, img2, rimg1, rimg2, x, y, r
+
 
 
 if __name__ == "__main__":
-    two_photo_circle(path_to_images, diametr_pole)
+    print("EE")
+    #two_photo_circle(path_to_images, diametr_pole)

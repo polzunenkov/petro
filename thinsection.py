@@ -5,14 +5,13 @@ import cv2
 import numpy as np
 import sys
 import glob
-from script import (
-    two_photo_circle,
-    two_photo_square,
-    one_photo_circle,
-    one_photo_square,
-    one_photo_huf_circle
-)
+from script import LoadImg
+from tkinter import filedialog as fd
 
+def path_new_folder_img():
+    path_to_image = fd.askdirectory()#initialdir=os.path.normpath("C://"), title="Example"
+    #os.mkdir(path_to_image)
+    return path_to_image
 
 def _create_new_path(old_path, thinsection_name, lense, uch_name):
     """ Возвращает новое имя для фотографий шлифов с учетом имени thinsection_name
@@ -95,37 +94,61 @@ def main(path, pattern, thinsection_name, lense_name, uch_name, two_circle, two_
         one_circle=one_circle,
         one_square=one_square,
         do_not_remove_from_phone=do_not_remove_from_phone,
+        folder_img=folder_img,
     )
 
 
-def ready(path, pattern, thinsection_name, lense_name, uch_name, two_circle=False, two_square=False, one_circle=False, one_square=False, do_not_remove_from_phone=False):
+def ready(path, pattern, thinsection_name, lense_name, uch_name, two_circle=False, two_square=False, one_circle=False, one_square=False, do_not_remove_from_phone=False, folder_img=False):
     """ 
     Копирует файлы с камеры телефона на компьютер
     """
-    print(two_circle,two_square,one_circle,one_square)
-    old_path = os.path.normpath(path)
-    new_path = _create_new_path(old_path, thinsection_name, lense_name, uch_name)
-    click.echo(old_path)
-    click.echo(new_path)
-    
-    if two_circle:
-	    copy(2, new_path)
-	    two_photo_circle(new_path, lense_name)
-	    one_photo_huf_circle(new_path, lense_name)
-    if two_square:
-	    copy(2, new_path)
-	    two_photo_square(new_path, lense_name)
+    print("1: ", folder_img)
+    #print(two_circle,two_square,one_circle,one_square)
+    #
+    #click.echo(old_path)
+    #click.echo(new_path)
+    if folder_img:
+        print("2: ", folder_img)
+        old_path = os.path.normpath(path)
+        print("link 1", old_path)
+        new_path = _create_new_path(old_path, thinsection_name, lense_name, uch_name)
+        print("link 1", new_path)
+        copy(2, new_path)
+        print("cope TRUE")
+        
+        load_img = LoadImg(new_path, lense_name)
+        if two_circle:		
+	        load_img.two_photo_circle()
+	        load_img.one_photo_huf_circle()
+        if two_square:
+	        load_img.two_photo_square()
 
-    if one_circle:
-	    copy(1, new_path)
-	    one_photo_circle(new_path, lense_name)
-    if one_square:
-	    copy(1, new_path)
-	    one_photo_square(new_path, lense_name)
+        if one_circle:
+	        copy(1, new_path)
+	        load_img.one_photo_circle()
+        if one_square:
+	        copy(1, new_path)
+	        load_img.one_photo_square()
 
-    if not do_not_remove_from_phone:
-        del_photo_folder(pattern)
+        if not do_not_remove_from_phone:
+            del_photo_folder(pattern)
 
+    else:
+        print("3: ", folder_img)
+        new_path =  path_new_folder_img()
+        
+        load_img = LoadImg(new_path, lense_name)
+        if two_circle:
+	        load_img.two_photo_circle()
+	        load_img.one_photo_huf_circle()
+        if two_square:
+	        load_img.two_photo_square()
 
+        if one_circle:
+	        load_img.one_photo_circle()
+        if one_square:
+	        load_img.one_photo_square()
+
+        
 if __name__ == "__main__":
     main()

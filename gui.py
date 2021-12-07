@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter.ttk import Combobox
+from tkinter import filedialog as fd
 import time
 import subprocess
 import tkinter.font as font
@@ -7,9 +8,8 @@ import os
 import configparser
 from thinsection import ready
 from script import create_config_, get_setting, update_setting, get_config, lens_
-
 SETTINGS_PATH = "settings.ini"
-
+from settings import folder_img
 
 def about_as():
     about = Tk()
@@ -20,6 +20,30 @@ def about_as():
         font=Times,
         text="https://github.com/polzunenkov/petro/archive/refs/heads/dev.zip",
     ).pack(side=TOP, fill=BOTH, padx=5, pady=0, expand=1)
+
+
+def camera_on():
+    global folder_img
+    folder_img=True
+    pipe = os.popen("adb shell getprop ro.build.version.release ")
+    version_OS = int(pipe.read())
+    print("version Android=", version_OS)
+    # The interval between operations depends on the phone configuration. The higher the configuration, the shorter the time.
+    sleep_time = 0.5
+    print(version_OS==9)
+    if version_OS==9:
+        # Use popen to set shell=True will not pop up cmd box
+        subprocess.Popen("scrcpy ", shell=True)
+    else:
+        subprocess.Popen("scrcpy -m 1520 ", shell=True)
+        
+    time.sleep(sleep_time)
+    subprocess.Popen("adb shell am start -a android.media.action.STILL_IMAGE_CAMERA", shell=True) 
+
+def folder_files():
+    global folder_img
+    folder_img=False
+
 
 
 def settings():
@@ -129,23 +153,8 @@ def on_select(event, obj):
     obj["values"] = lens
 
 
-def camera_on():
 
-    pipe = os.popen("adb shell getprop ro.build.version.release ")
-    version_OS = int(pipe.read())
-    print("version Android=", version_OS)
-    # The interval between operations depends on the phone configuration. The higher the configuration, the shorter the time.
-    sleep_time = 0.5
-    print(version_OS==9)
-    if version_OS==9:
-        # Use popen to set shell=True will not pop up cmd box
-        subprocess.Popen("scrcpy ", shell=True)
-    else:
-        subprocess.Popen("scrcpy -m 1520 ", shell=True)
-        
-    time.sleep(sleep_time)
-    subprocess.Popen("adb shell am start -a android.media.action.STILL_IMAGE_CAMERA", shell=True) 
-
+    
 
 def param(collection, thinsection, obj, uch, chk_state, chk_state1, chk_state2, chk_state3):
 
@@ -174,6 +183,7 @@ def param(collection, thinsection, obj, uch, chk_state, chk_state1, chk_state2, 
         one_circle=one_circle_,
         one_square=one_square_,
         do_not_remove_from_phone=True,
+        folder_img=folder_img,
     )
 
 
@@ -203,6 +213,9 @@ class Application:
             frame1, image=photo, font=btn_font, text="About", command=about_as
         )
         about.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
+        
+        Folder = Button(frame1, font=btn_font, text="Folder", command=folder_files)
+        Folder.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
 
         camera = Button(frame1, font=btn_font, text="Camera", command=camera_on)
         camera.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
