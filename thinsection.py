@@ -135,8 +135,9 @@ def ready(path, pattern, thinsection_name, lense_name, uch_name, two_circle=Fals
 
     else:
         print("3: ", folder_img)
-        new_path =  path_new_folder_img()
-        
+        folder_path =  path_new_folder_img()
+        new_path =  os.path.join(folder_path, thinsection_name)
+        os.mkdir(new_path)
         load_img = LoadImg(new_path, lense_name)
         if two_circle:
 	        load_img.two_photo_circle()

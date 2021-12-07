@@ -359,11 +359,9 @@ def save_img(path_to_images, image, name):
 
 def load(path_to_images):
     """ Загрузка двух фотографий шлифа """
-    if folder_img:
+    if not folder_img:
         type_img="*.jpeg"
         print("выбор файлов на компьютере")
-        
-        
         
         for i in range(2):
             if i==0:
@@ -372,9 +370,12 @@ def load(path_to_images):
             else:
                 foto2 = fd.askopenfilename()
                 os.system('cp '+ foto2 +' '+path_to_images +'/fig2.jpeg')
-               
+                
                 all_images_in_directory = os.path.join(path_to_images, type_img)
                 images = sorted(glob.glob(all_images_in_directory))
+                print("Проверка колво изображений:", images)
+                sample1=foto1.split("/")[-4]
+                sample2=foto2.split("/")[-4]
          #os.path.dirname("/media/gardogen/995G/home/gardogen/PROGRAM/petro/vll/4504/x5/1/two_photo_square.jpeg")
          #images =[foto1,foto2]
     else:
@@ -382,13 +383,13 @@ def load(path_to_images):
         all_images_in_directory = os.path.join(path_to_images, type_img)
         images = sorted(glob.glob(all_images_in_directory))
     
-    if len(images) == 2:
+    if len(images) > 1:
         img1 = cv2.imread(images[0], 1)
         img2 = cv2.imread(images[1], 1)
     else:
         img1 = cv2.imread(images[0], 1)
         img2 = cv2.imread(images[0], 1)
-    return img1, img2
+    return img1, img2, sample1, sample2
 
 
 def show_img_montage(path_to_images, name):
@@ -407,7 +408,7 @@ class LoadImg:
     def __init__(self, path_to_images, lense_name):
         """Constructor"""
         self.path_to_images=path_to_images
-        (self.img1,self.img2) = load(self.path_to_images)
+        (self.img1, self.img2, self.sample1, self.sample2 ) = load(self.path_to_images)
         self.rimg1 = self.calculate_resize_img(RESIZE_FACTOR,self.img1)
         self.rimg2 = self.calculate_resize_img(RESIZE_FACTOR,self.img2)
         (self.x_r, self.y_r, self.r_r) = find_circle(self.rimg1)
@@ -432,7 +433,7 @@ class LoadImg:
         w = int(w / resize_factor)
         return cv2.resize(img, (w, h))
     
-    def add_scale_bar(self, combine_image, lense_name):
+    def add_scale_bar(self, combine_image, lense_name, sample_name):
         """ добавляет подписи николей и масштабную линейку на фото
 		    сохраняет фото в .jpg (уменьшеном) формате"""
         img = combine_image
@@ -462,7 +463,7 @@ class LoadImg:
         )
         add_text_to_image(
             img,
-            text="Sample",
+            text=sample_name,
             size=size_text * 3.5,
             color=(0, 0, 0),
             thickness=thickness_text,
@@ -558,8 +559,8 @@ class LoadImg:
         (crop_square_img1, crop_square_img2) = crop_square(self.x, self.y, self.r, self.img1, self.img2)
         image_bar1 = self.add_rectangle_trans(crop_square_img1, self.lense_name)
         image_bar2 = self.add_rectangle_trans(crop_square_img2, self.lense_name)
-        image_bar1_ = self.add_scale_bar(image_bar1, self.lense_name)
-        image_bar2_ = self.add_scale_bar(image_bar2, self.lense_name)
+        image_bar1_ = self.add_scale_bar(image_bar1, self.lense_name, self.sample1)
+        image_bar2_ = self.add_scale_bar(image_bar2, self.lense_name, self.sample2)
         h, w = image_bar1_.shape[:2]
         idm = image_bar1_.copy()[0:h, 0 : int(w * 0.05)]
         zeros = np.zeros((h, int(w * 0.05)), np.uint8)

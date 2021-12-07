@@ -40,9 +40,9 @@ def camera_on():
     time.sleep(sleep_time)
     subprocess.Popen("adb shell am start -a android.media.action.STILL_IMAGE_CAMERA", shell=True) 
 
-def folder_files():
-    global folder_img
-    folder_img=False
+#def folder_files():
+#    global folder_img
+#    folder_img=False
 
 
 
@@ -214,8 +214,8 @@ class Application:
         )
         about.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
         
-        Folder = Button(frame1, font=btn_font, text="Folder", command=folder_files)
-        Folder.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
+        #Folder = Button(frame1, font=btn_font, text="Folder", command=folder_files)
+        #Folder.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
 
         camera = Button(frame1, font=btn_font, text="Camera", command=camera_on)
         camera.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)

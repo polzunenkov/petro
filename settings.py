@@ -1,1 +1,1 @@
-folder_img = True
+folder_img = False
