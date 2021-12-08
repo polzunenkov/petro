@@ -9,7 +9,8 @@ import configparser
 from thinsection import ready
 from script import create_config_, get_setting, update_setting, get_config, lens_
 SETTINGS_PATH = "settings.ini"
-from settings import folder_img
+#from settings import folder_img
+#folder_img=False
 
 def about_as():
     about = Tk()
@@ -23,8 +24,8 @@ def about_as():
 
 
 def camera_on():
-    global folder_img
-    folder_img=True
+    #global folder_img
+    #folder_img=True
     pipe = os.popen("adb shell getprop ro.build.version.release ")
     version_OS = int(pipe.read())
     print("version Android=", version_OS)
@@ -39,7 +40,7 @@ def camera_on():
         
     time.sleep(sleep_time)
     subprocess.Popen("adb shell am start -a android.media.action.STILL_IMAGE_CAMERA", shell=True) 
-
+   
 #def folder_files():
 #    global folder_img
 #    folder_img=False
@@ -156,13 +157,14 @@ def on_select(event, obj):
 
     
 
-def param(collection, thinsection, obj, uch, chk_state, chk_state1, chk_state2, chk_state3):
+def param(collection, thinsection, obj, uch, chk_state, chk_state1, chk_state2, chk_state3, chk_state5 ):
 
     two_circle_ = False
     two_square_ = False
     one_circle_ = False
     one_square_ = False
-
+    folder_img_ = False
+    
     if chk_state.get() == 1:
         two_circle_ = True
     if chk_state1.get() == 1:
@@ -171,6 +173,8 @@ def param(collection, thinsection, obj, uch, chk_state, chk_state1, chk_state2, 
         one_circle_ = True
     if chk_state3.get() == 1:
         one_square_ = True
+    if chk_state5.get() == 1:
+        folder_img_ = True
 
     ready(
         path=collection.get(),
@@ -183,7 +187,7 @@ def param(collection, thinsection, obj, uch, chk_state, chk_state1, chk_state2, 
         one_circle=one_circle_,
         one_square=one_square_,
         do_not_remove_from_phone=True,
-        folder_img=folder_img,
+        folder_img=folder_img_,
     )
 
 
@@ -216,6 +220,11 @@ class Application:
         
         #Folder = Button(frame1, font=btn_font, text="Folder", command=folder_files)
         #Folder.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
+        chk_state5 = IntVar()
+        chk_state5.set(0)  # False
+        chk_state5.set(1)  # True
+        chk = Checkbutton(frame1, font=Times1, text="Image from folder", var=chk_state5)
+        chk.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
 
         camera = Button(frame1, font=btn_font, text="Camera", command=camera_on)
         camera.pack(side=TOP, fill=BOTH, padx=5, pady=5, expand=1)
@@ -297,6 +306,7 @@ class Application:
                 chk_state1,
                 chk_state2,
                 chk_state3,
+                chk_state5,
             ),
         )
         btn.pack(side=BOTTOM, fill=BOTH, padx=5, pady=5, expand=1)

@@ -9,7 +9,7 @@ import time
 import matplotlib.pyplot as plt
 from tkinter import filedialog as fd
 RESIZE_FACTOR = 10
-from settings import folder_img
+#from settings import folder_img
 
 
 def create_config_(path):
@@ -357,39 +357,6 @@ def save_img(path_to_images, image, name):
     cv2.imwrite(path_montage_jpg, image)
 
 
-def load(path_to_images):
-    """ Загрузка двух фотографий шлифа """
-    if not folder_img:
-        type_img="*.jpeg"
-        print("выбор файлов на компьютере")
-        
-        for i in range(2):
-            if i==0:
-                foto1 = fd.askopenfilename()
-                os.system('cp '+ foto1 + ' '+path_to_images +'/fig1.jpeg')
-            else:
-                foto2 = fd.askopenfilename()
-                os.system('cp '+ foto2 +' '+path_to_images +'/fig2.jpeg')
-                
-                all_images_in_directory = os.path.join(path_to_images, type_img)
-                images = sorted(glob.glob(all_images_in_directory))
-                print("Проверка колво изображений:", images)
-                sample1=foto1.split("/")[-4]
-                sample2=foto2.split("/")[-4]
-         #os.path.dirname("/media/gardogen/995G/home/gardogen/PROGRAM/petro/vll/4504/x5/1/two_photo_square.jpeg")
-         #images =[foto1,foto2]
-    else:
-        type_img="*.jpg"
-        all_images_in_directory = os.path.join(path_to_images, type_img)
-        images = sorted(glob.glob(all_images_in_directory))
-    
-    if len(images) > 1:
-        img1 = cv2.imread(images[0], 1)
-        img2 = cv2.imread(images[1], 1)
-    else:
-        img1 = cv2.imread(images[0], 1)
-        img2 = cv2.imread(images[0], 1)
-    return img1, img2, sample1, sample2
 
 
 def show_img_montage(path_to_images, name):
@@ -405,18 +372,61 @@ class LoadImg:
 	перемасштабированные изображения rimg1, rimg2,
 	координаты и радиус круглой маски """
  
-    def __init__(self, path_to_images, lense_name):
+    def __init__(self, path_to_images, lense_name, folder_img):
         """Constructor"""
         self.path_to_images=path_to_images
-        (self.img1, self.img2, self.sample1, self.sample2 ) = load(self.path_to_images)
+        self.lense_name=lense_name
+        self.folder_img=folder_img
+        (self.img1, self.img2, self.sample1, self.sample2, self.lens_name1, self.lens_name2) = self.load()
         self.rimg1 = self.calculate_resize_img(RESIZE_FACTOR,self.img1)
         self.rimg2 = self.calculate_resize_img(RESIZE_FACTOR,self.img2)
         (self.x_r, self.y_r, self.r_r) = find_circle(self.rimg1)
         (self.x, self.y, self.r) = initial_coordinates_radius(
         self.x_r, self.y_r, self.r_r, RESIZE_FACTOR)
-        self.lense_name=lense_name
-               
         
+               
+    def load(self):
+        """Загрузка двух фотографий шлифа"""
+    
+        if not self.folder_img:
+            type_img="*.jpg"
+            all_images_in_directory = os.path.join(self.path_to_images, type_img)
+            images = sorted(glob.glob(all_images_in_directory))
+            sample1=images[0]
+            sample2=images[1]
+            lens_name1=sample1.split("/")[-3]
+            lens_name2=sample2.split("/")[-3]
+        
+            
+        else:
+            type_img="*.jpeg"
+            print("выбор файлов на компьютере")
+            
+            for i in range(2):
+                if i==0:
+                    foto1 = fd.askopenfilename()
+                    os.system('cp '+ foto1 + ' '+self.path_to_images +'/fig1.jpeg')
+                else:
+                    foto2 = fd.askopenfilename()
+                    os.system('cp '+ foto2 +' '+self.path_to_images +'/fig2.jpeg')
+                    
+                    all_images_in_directory = os.path.join(self.path_to_images, type_img)
+                    images = sorted(glob.glob(all_images_in_directory))
+                    print("Проверка колво изображений:", images)
+                    sample1=foto1.split("/")[-4]
+                    sample2=foto2.split("/")[-4]
+                    lens_name1=foto1.split("/")[-3]
+                    lens_name2=foto2.split("/")[-3]
+                    
+                                    
+        if len(images) > 1:
+            img1 = cv2.imread(images[0], 1)
+            img2 = cv2.imread(images[1], 1)
+        else:
+            img1 = cv2.imread(images[0], 1)
+            img2 = cv2.imread(images[0], 1)
+        return img1, img2, sample1, sample2, lens_name1, lens_name2
+
     
     def combine_img(self, crop_img1, crop_img2, resize_f=3):
         """ Обьединяет две фотографии"""
@@ -557,10 +567,10 @@ class LoadImg:
 	    с маштабными линейками с левой верхней стороны каждого квадрата"""
         
         (crop_square_img1, crop_square_img2) = crop_square(self.x, self.y, self.r, self.img1, self.img2)
-        image_bar1 = self.add_rectangle_trans(crop_square_img1, self.lense_name)
-        image_bar2 = self.add_rectangle_trans(crop_square_img2, self.lense_name)
-        image_bar1_ = self.add_scale_bar(image_bar1, self.lense_name, self.sample1)
-        image_bar2_ = self.add_scale_bar(image_bar2, self.lense_name, self.sample2)
+        image_bar1 = self.add_rectangle_trans(crop_square_img1, self.lens_name1)
+        image_bar2 = self.add_rectangle_trans(crop_square_img2, self.lens_name2)
+        image_bar1_ = self.add_scale_bar(image_bar1, self.lens_name1, self.sample1)
+        image_bar2_ = self.add_scale_bar(image_bar2, self.lens_name2, self.sample2)
         h, w = image_bar1_.shape[:2]
         idm = image_bar1_.copy()[0:h, 0 : int(w * 0.05)]
         zeros = np.zeros((h, int(w * 0.05)), np.uint8)
