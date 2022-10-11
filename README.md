@@ -4,6 +4,7 @@
 
 This application provides photographing petrographic thin sections under microscopic with use  computer  and Android devices control of scrcpy.  It works on GNU/Linux and Windows 10.
 
+Petrographic studies are accompanied by microscopic photographs. Not a simple process of obtaining and a long time for processing microphotos contributed to the emergence of this program.
 
 Its features include:
  - [make photo](#resulting-photos) with mirroring Android device
