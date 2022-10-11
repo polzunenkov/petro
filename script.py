@@ -274,7 +274,7 @@ def convert_px_to_mm(
     start_w = st_w * w
     end_w = ed_w * w
     bar_pix = end_h - start_h
-    value_bar_mm = str(round(pix_mm * bar_pix, 1)) + " mm"
+    value_bar_mm = str(round(pix_mm * bar_pix, 2)) + " mm"
     start = (int(start_h), int(start_w))
     end = (int(end_h), int(end_w))
 
@@ -392,10 +392,15 @@ class LoadImg:
             type_img="*.jpg"
             all_images_in_directory = os.path.join(self.path_to_images, type_img)
             images = sorted(glob.glob(all_images_in_directory))
-            sample1=images[0]
-            sample2=images[1]
-            lens_name1=sample1.split("/")[-3]
-            lens_name2=sample2.split("/")[-3]
+            foto1=images[0]
+            foto2=images[1]
+            sample1=foto1.split("/")[-4]
+            print("СМОТРИ СЮДА!!!")
+            print(foto1)
+            print(sample1)
+            sample2=foto2.split("/")[-4]
+            lens_name1=foto1.split("/")[-3]
+            lens_name2=foto2.split("/")[-3]
         
             
         else:
@@ -443,9 +448,15 @@ class LoadImg:
         w = int(w / resize_factor)
         return cv2.resize(img, (w, h))
     
-    def add_scale_bar(self, combine_image, lense_name, sample_name):
+    def add_scale_bar(self, combine_image, lense_name, sample_name, nicols_cross=False):
         """ добавляет подписи николей и масштабную линейку на фото
 		    сохраняет фото в .jpg (уменьшеном) формате"""
+        if nicols_cross:
+            text_under_foto="Nicol+ Sample:"
+            
+        if not nicols_cross:
+            text_under_foto="Nicol|| Sample:"
+            
         img = combine_image
         lens = lens_()
         diametr_pole = float(get_setting("settings.ini", "Lense", lense_name))
@@ -473,11 +484,11 @@ class LoadImg:
         )
         add_text_to_image(
             img,
-            text=sample_name,
+            text=text_under_foto+sample_name,
             size=size_text * 3.5,
             color=(0, 0, 0),
             thickness=thickness_text,
-            x=int(h * 0.35),
+            x=int(h * 0.01),
             y=int(w * 0.97),
         )
         img = self.calculate_resize_img(3, img)
@@ -570,7 +581,7 @@ class LoadImg:
         image_bar1 = self.add_rectangle_trans(crop_square_img1, self.lens_name1)
         image_bar2 = self.add_rectangle_trans(crop_square_img2, self.lens_name2)
         image_bar1_ = self.add_scale_bar(image_bar1, self.lens_name1, self.sample1)
-        image_bar2_ = self.add_scale_bar(image_bar2, self.lens_name2, self.sample2)
+        image_bar2_ = self.add_scale_bar(image_bar2, self.lens_name2, self.sample2, nicols_cross=True)
         h, w = image_bar1_.shape[:2]
         idm = image_bar1_.copy()[0:h, 0 : int(w * 0.05)]
         zeros = np.zeros((h, int(w * 0.05)), np.uint8)
