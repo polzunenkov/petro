@@ -1,10 +1,17 @@
 # petro (v1.0)
 
-<img src="https://github.com/polzunenkov/petro/blob/dev/microscope.png" width="250" height="80" alt="petro" align="left" />
+<img src="app/window_program.png" width="250" height="650" alt="petro" align="left" />
 
 This application provides photographing petrographic thin sections under microscopic with use  computer  and Android devices control of scrcpy.  It works on GNU/Linux and Windows 10.
 
-![window program](app/window_program.png)
+
+Its features include:
+ - [make photo] with mirroring Android device
+ - [cut out dark circle ocular microscopic from photo] automatics
+ - [add text on the photo] automatics
+ - [add diferent types mask on the photo] user in windows program
+ - [cataloging] automatics
+ - and more…
 
 ## General view of the program
 
@@ -25,10 +32,15 @@ This application provides photographing petrographic thin sections under microsc
 ## Requirements
 
 - [python][link-python] on your computer.
+
 [link-python]: https://www.python.org/downloads
+
  - [adb][link-adb] on your computer.
+
 [link-adb]: https://developer.android.com/studio/command-line/adb
+
  - [scrcpy][link-scrcpy] on your computer.
+
 [link-scrcpy]: https://github.com/Genymobile/scrcpy
  
  
