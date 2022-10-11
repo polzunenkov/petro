@@ -4,7 +4,15 @@
 
 This application provides photographing petrographic thin sections under microscopic with use  computer  and Android devices control of scrcpy.
 
-![screenshot](app/window_program.png)
+![window program](app/window_program.png)
+
+![general view of the program](app/photo_0.jpeg)
+
+![resulting photos](app/photo_1.jpeg)
+
+![types of masks](app/photo_2.png)
+
+![directory tree](app/tree_catalogs.png)
 
 ### Summary
 
