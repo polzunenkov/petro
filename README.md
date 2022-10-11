@@ -11,14 +11,14 @@ Its features include:
  - [add text on the photo] automatics
  - [add diferent types mask on the photo] user in windows program
  - [cataloging] automatics
+ 
+ 
+ 
+ 
+ 
+ 
+ 
  - and more…
-
-
-
-
-
-
-
 
 ## General view of the program
 
