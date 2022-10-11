@@ -1,6 +1,6 @@
 # petro (v1.0)
 
-<img src="app/window_program.png" width="250" height="500" alt="petro" align="left" />
+<img src="app/window_program.png" width="250" height="550" alt="petro" align="left" />
 
 This application provides photographing petrographic thin sections under microscopic with use  computer  and Android devices control of scrcpy.  It works on GNU/Linux and Windows 10.
 
@@ -12,6 +12,13 @@ Its features include:
  - [add diferent types mask on the photo] user in windows program
  - [cataloging] automatics
  - and more…
+
+
+
+
+
+
+
 
 ## General view of the program
 
