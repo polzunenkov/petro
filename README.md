@@ -6,18 +6,11 @@ This application provides photographing petrographic thin sections under microsc
 
 
 Its features include:
- - [make photo] with mirroring Android device
- - [cut out dark circle ocular microscopic from photo] automatics
- - [add text on the photo] automatics
- - [add diferent types mask on the photo] user in windows program
- - [cataloging] automatics
- 
- 
- 
- 
- 
- 
- 
+ - [make photo](#resulting-photos) with mirroring Android device
+ - cut out dark circle ocular microscopic from photo automatics
+ - add text on the photo automatics
+ - [add diferent types mask on the photo](#types-of-masks) user in windows program
+ - [cataloging](#directory-tree) automatics
  - and more…
 
 ## General view of the program
