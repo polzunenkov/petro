@@ -16,7 +16,7 @@ Its features include:
 
 ## General view of the program
 
-![general view of the program](app/photo_0.jpeg)
+<img src="app/photo_0.jpeg" width="650" height="650" alt="view" align="center" />
 
 ## Resulting photos
 
