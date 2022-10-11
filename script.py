@@ -656,3 +656,4 @@ class LoadImg:
 if __name__ == "__main__":
     print("EE")
     #two_photo_circle(path_to_images, diametr_pole)
+    #test
